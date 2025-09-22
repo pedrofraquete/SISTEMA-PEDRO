@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-09-22T23:04:54.206Z",
+  "results": {
+    "passed": 79,
+    "failed": 3,
+    "total": 82,
+    "errors": [
+      "frontend/assets/js/router.js não tem console.error sem tratamento",
+      "frontend/assets/js/supabase-config.js não tem console.error sem tratamento",
+      "server.js não tem console.error sem tratamento"
+    ]
+  },
+  "success": false
+}
