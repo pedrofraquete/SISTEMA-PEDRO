@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        /* Partículas de fundo */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        /* Container principal */
+        .welcome-container {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            padding: 60px 50px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Logo e título */
+        .logo {
+            margin-bottom: 40px;
+        }
+
+        .logo i {
+            font-size: 5rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 50px;
+            font-weight: 400;
+            line-height: 1.5;
+        }
+
+        /* Botões de ação */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .btn {
+            padding: 18px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Status do sistema */
+        .system-status {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 12px;
+            border-left: 4px solid #10b981;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .status-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .status-label {
+            color: #666;
+        }
+
+        .status-value {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .welcome-container {
+                width: 90%;
+                padding: 40px 30px;
+            }
+
+            .title {
+                font-size: 2.2rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Partículas de fundo -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Container principal -->
+    <div class="welcome-container">
+        <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <h1 class="title">Journey 100k</h1>
+            <p class="subtitle">Sistema completo de gestão empresarial<br>Soluzione Giusta</p>
+        </div>
+
+        <div class="action-buttons">
+            <a href="pages/login.html" class="btn btn-primary" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                Acessar Sistema
+            </a>
+            
+            <a href="#" class="btn btn-secondary" onclick="showSystemInfo()">
+                <i class="fas fa-info-circle"></i>
+                Informações do Sistema
+            </a>
+        </div>
+
+        <div class="system-status">
+            <div class="status-item">
+                <span class="status-label">Status do Sistema:</span>
+                <span class="status-value">
+                    <i class="fas fa-circle" style="font-size: 0.7rem; margin-right: 5px;"></i>
+                    Online
+                </span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Versão:</span>
+                <span class="status-value">v1.0.0</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Última Atualização:</span>
+                <span class="status-value" id="lastUpdate">22/09/2025</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Banco de Dados:</span>
+                <span class="status-value">
+                    <i class="fas fa-database" style="margin-right: 5px;"></i>
+                    Supabase
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading overlay -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        // =================================================================
+        // SISTEMA JOURNEY 100K - PÁGINA INICIAL
+        // =================================================================
+
+        // Criar partículas de fundo
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Tamanho aleatório
+                const size = Math.random() * 6 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                // Posição aleatória
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                
+                // Delay de animação aleatório
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Mostrar informações do sistema
+        function showSystemInfo() {
+            const info = `
+🚀 SISTEMA JOURNEY 100K - SOLUZIONE GIUSTA
+
+📋 MÓDULOS DISPONÍVEIS:
+• Dashboard Principal - Visão geral e métricas
+• Gestão de Funcionários - Controle de colaboradores
+• Gestão de Projetos - Kanban e acompanhamento
+• Módulo Financeiro - Receitas e despesas
+• Chat Interno - Comunicação em tempo real
+• Ponto Digital - Controle de frequência
+• Documentos - Armazenamento de arquivos
+• Relatórios - Análises e dashboards
+• Gamificação - Sistema de pontuação
+• Configurações - Personalização do sistema
+
+🔧 TECNOLOGIAS:
+• Frontend: HTML5, CSS3, JavaScript
+• Backend: Node.js / Python Flask
+• Banco de Dados: Supabase (PostgreSQL)
+• Autenticação: Supabase Auth
+• Deploy: Vercel / Netlify
+
+👨‍💻 DESENVOLVIDO POR:
+Pedro Fraquete - CEO Soluzione Giusta
+
+📞 SUPORTE:
+contato@soluzionegiusta.com
+            `;
+            
+            alert(info);
+        }
+
+        // Função de loading
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+
+        // Verificar status do sistema
+        async function checkSystemStatus() {
+            try {
+                // Simular verificação de status
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Atualizar última verificação
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('pt-BR', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                document.getElementById('lastUpdate').textContent = 
+                    `${now.toLocaleDateString('pt-BR')} ${timeString}`;
+                
+                return true;
+            } catch (error) {
+                console.error('Erro ao verificar status:', error);
+                return false;
+            }
+        }
+
+        // Event listeners
+        document.getElementById('loginBtn').addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoading();
+            
+            // Simular carregamento
+            setTimeout(() => {
+                hideLoading();
+                window.location.href = 'pages/login.html';
+            }, 1500);
+        });
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            // Enter ou Espaço para fazer login
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                document.getElementById('loginBtn').click();
+            }
+            
+            // F1 para informações do sistema
+            if (e.key === 'F1') {
+                e.preventDefault();
+                showSystemInfo();
+            }
+        });
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            checkSystemStatus();
+            
+            // Verificar status a cada 5 minutos
+            setInterval(checkSystemStatus, 300000);
+            
+            // Efeito de digitação no título
+            const title = document.querySelector('.title');
+            const originalText = title.textContent;
+            title.textContent = '';
+            
+            let i = 0;
+            const typeWriter = () => {
+                if (i < originalText.length) {
+                    title.textContent += originalText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 100);
+                }
+            };
+            
+            setTimeout(typeWriter, 500);
+        });
+
+        // Detectar se está sendo executado localmente
+        if (window.location.protocol === 'file:') {
+            console.warn('⚠️ Sistema sendo executado localmente. Para melhor experiência, use um servidor web.');
+        }
+
+        // Service Worker para PWA (futuro)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // navigator.serviceWorker.register('/sw.js')
+                //     .then(registration => console.log('SW registrado'))
+                //     .catch(error => console.log('SW falhou'));
+            });
+        }
+    </script>
+</body>
+</html>

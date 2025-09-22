@@ -1,0 +1,512 @@
+<!-- =================================================================
+     SISTEMA JOURNEY 100K - SIDEBAR COMPONENT
+     ================================================================= -->
+
+<nav class="sidebar" id="sidebar">
+    <button class="toggle-sidebar" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+    
+    <div class="logo">
+        <i class="fas fa-rocket rocket"></i>
+        <h1>Journey 100k</h1>
+    </div>
+    
+    <ul class="nav-menu">
+        <li class="nav-item">
+            <a href="dashboard/index.html" class="nav-link" data-route="/dashboard">
+                <i class="fas fa-chart-pie"></i>
+                <span>Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="employees/index.html" class="nav-link" data-route="/employees">
+                <i class="fas fa-users"></i>
+                <span>Funcionários</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="projects/index.html" class="nav-link" data-route="/projects">
+                <i class="fas fa-project-diagram"></i>
+                <span>Projetos</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="financial/index.html" class="nav-link" data-route="/financial">
+                <i class="fas fa-dollar-sign"></i>
+                <span>Financeiro</span>
+                <div class="notification-dot"></div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="chat/index.html" class="nav-link" data-route="/chat">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+                <div class="notification-dot"></div>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="ponto/index.html" class="nav-link" data-route="/ponto">
+                <i class="fas fa-clock"></i>
+                <span>Ponto Digital</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="documents/index.html" class="nav-link" data-route="/documents">
+                <i class="fas fa-file-alt"></i>
+                <span>Documentos</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="reports/index.html" class="nav-link" data-route="/reports">
+                <i class="fas fa-chart-bar"></i>
+                <span>Relatórios</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="gamification/index.html" class="nav-link" data-route="/gamification">
+                <i class="fas fa-trophy"></i>
+                <span>Gamificação</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="settings/index.html" class="nav-link" data-route="/settings">
+                <i class="fas fa-cog"></i>
+                <span>Configurações</span>
+            </a>
+        </li>
+    </ul>
+
+    <!-- User Profile Section -->
+    <div class="sidebar-footer">
+        <div class="user-profile">
+            <div class="user-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="user-info">
+                <div class="user-name">Pedro Fraquete</div>
+                <div class="user-role">CEO</div>
+            </div>
+            <button class="logout-btn" onclick="logout()" title="Sair">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<style>
+/* =================================================================
+   SIDEBAR STYLES
+   ================================================================= */
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+    padding: 20px 0;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar.collapsed {
+    width: var(--sidebar-collapsed-width);
+}
+
+.logo {
+    padding: 0 25px 30px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 30px;
+}
+
+.logo h1 {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .logo h1 {
+    opacity: 0;
+}
+
+.logo .rocket {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.nav-menu {
+    list-style: none;
+    padding: 0 15px;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.nav-item {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 15px 15px;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    position: relative;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    background: rgba(102, 126, 234, 0.15);
+    color: var(--primary-color);
+    transform: translateX(5px);
+}
+
+.nav-link i {
+    font-size: 1.2rem;
+    margin-right: 15px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.sidebar.collapsed .nav-link span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.toggle-sidebar {
+    position: absolute;
+    top: 20px;
+    right: -15px;
+    width: 30px;
+    height: 30px;
+    background: var(--primary-color);
+    border: none;
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    z-index: 1001;
+}
+
+.toggle-sidebar:hover {
+    transform: scale(1.1);
+}
+
+/* Notification dot */
+.notification-dot {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 8px;
+    height: 8px;
+    background: var(--error-color);
+    border-radius: 50%;
+    border: 2px solid #1e293b;
+    animation: pulse 2s infinite;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    padding: 20px 15px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: auto;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    background: rgba(255,255,255,0.1);
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    color: white;
+    font-weight: 600;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-role {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.7);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--error-color);
+}
+
+.sidebar.collapsed .user-info {
+    display: none;
+}
+
+.sidebar.collapsed .logout-btn {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: var(--sidebar-width);
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    .toggle-sidebar {
+        display: none;
+    }
+}
+
+/* Tooltip para sidebar colapsada */
+.sidebar.collapsed .nav-item {
+    position: relative;
+}
+
+.sidebar.collapsed .nav-item:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--gray-800);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    z-index: 1002;
+    margin-left: 10px;
+    box-shadow: var(--shadow-lg);
+}
+
+.sidebar.collapsed .nav-item:hover::before {
+    content: '';
+    position: absolute;
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border: 5px solid transparent;
+    border-right-color: var(--gray-800);
+    z-index: 1002;
+    margin-left: 5px;
+}
+</style>
+
+<script>
+// =================================================================
+// SIDEBAR FUNCTIONALITY
+// =================================================================
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    sidebar.classList.toggle('collapsed');
+    
+    // Salvar estado no localStorage
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    localStorage.setItem('sidebar_collapsed', isCollapsed);
+    
+    // Ajustar margin do conteúdo principal
+    if (mainContent) {
+        if (isCollapsed) {
+            mainContent.style.marginLeft = 'var(--sidebar-collapsed-width)';
+        } else {
+            mainContent.style.marginLeft = 'var(--sidebar-width)';
+        }
+    }
+    
+    // Disparar evento personalizado
+    window.dispatchEvent(new CustomEvent('sidebarToggle', {
+        detail: { collapsed: isCollapsed }
+    }));
+}
+
+// Restaurar estado da sidebar
+function restoreSidebarState() {
+    const isCollapsed = localStorage.getItem('sidebar_collapsed') === 'true';
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.querySelector('.main-content');
+    
+    if (isCollapsed && sidebar) {
+        sidebar.classList.add('collapsed');
+        if (mainContent) {
+            mainContent.style.marginLeft = 'var(--sidebar-collapsed-width)';
+        }
+    }
+}
+
+// Marcar item ativo na navegação
+function setActiveNavItem(route) {
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('data-route') === route) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// Atualizar informações do usuário
+function updateUserInfo(user) {
+    const userName = document.querySelector('.user-name');
+    const userRole = document.querySelector('.user-role');
+    const userAvatar = document.querySelector('.user-avatar');
+    
+    if (userName && user.full_name) {
+        userName.textContent = user.full_name;
+    }
+    
+    if (userRole && user.role) {
+        userRole.textContent = user.role.replace('_', ' ').toUpperCase();
+    }
+    
+    if (userAvatar && user.full_name) {
+        const initials = user.full_name.split(' ')
+            .map(name => name.charAt(0))
+            .join('')
+            .substring(0, 2)
+            .toUpperCase();
+        userAvatar.innerHTML = initials;
+    }
+}
+
+// Controlar visibilidade de itens baseado em permissões
+function updateSidebarPermissions(userRole) {
+    const rolePermissions = {
+        'employee': ['dashboard', 'projects', 'chat', 'ponto', 'documents', 'gamification'],
+        'manager': ['dashboard', 'employees', 'projects', 'chat', 'ponto', 'documents', 'reports', 'gamification'],
+        'admin': ['dashboard', 'employees', 'projects', 'financial', 'chat', 'ponto', 'documents', 'reports', 'gamification', 'settings'],
+        'super_admin': ['dashboard', 'employees', 'projects', 'financial', 'chat', 'ponto', 'documents', 'reports', 'gamification', 'settings']
+    };
+    
+    const allowedRoutes = rolePermissions[userRole] || [];
+    const navLinks = document.querySelectorAll('.nav-link');
+    
+    navLinks.forEach(link => {
+        const route = link.getAttribute('data-route');
+        const routeName = route ? route.substring(1) : '';
+        
+        if (allowedRoutes.includes(routeName)) {
+            link.parentElement.style.display = 'block';
+        } else {
+            link.parentElement.style.display = 'none';
+        }
+    });
+}
+
+// Adicionar tooltips para sidebar colapsada
+function addTooltips() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        const link = item.querySelector('.nav-link');
+        const span = link.querySelector('span');
+        if (span) {
+            item.setAttribute('data-tooltip', span.textContent);
+        }
+    });
+}
+
+// Inicialização
+document.addEventListener('DOMContentLoaded', function() {
+    restoreSidebarState();
+    addTooltips();
+    
+    // Atualizar informações do usuário se disponível
+    const currentUser = getCurrentUser ? getCurrentUser() : null;
+    if (currentUser) {
+        updateUserInfo(currentUser);
+        updateSidebarPermissions(currentUser.role);
+    }
+});
+
+// Responsive: toggle sidebar em mobile
+function toggleMobileSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (window.innerWidth <= 768) {
+        sidebar.classList.toggle('open');
+    }
+}
+
+// Fechar sidebar em mobile ao clicar fora
+document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768) {
+        const sidebar = document.getElementById('sidebar');
+        const isClickInsideSidebar = sidebar.contains(e.target);
+        const isToggleButton = e.target.closest('.mobile-menu-toggle');
+        
+        if (!isClickInsideSidebar && !isToggleButton && sidebar.classList.contains('open')) {
+            sidebar.classList.remove('open');
+        }
+    }
+});
+</script>
