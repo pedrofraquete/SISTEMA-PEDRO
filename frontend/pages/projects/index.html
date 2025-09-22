@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projetos - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        /* PROJECT TABS */
+        .project-tabs-section {
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 81px;
+            z-index: 90;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .tabs-container {
+            max-width: 100%;
+            overflow-x: auto;
+            padding: 0 40px;
+            scrollbar-width: none;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 5px;
+            min-width: max-content;
+            padding: 20px 0 0;
+        }
+
+        .tab-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 12px 12px 0 0;
+            font-weight: 600;
+            color: #64748b;
+            position: relative;
+            white-space: nowrap;
+            background: #f8fafc;
+            border: 2px solid transparent;
+            border-bottom: none;
+        }
+
+        .tab-item:hover {
+            color: #3b82f6;
+            background: #f1f5f9;
+            transform: translateY(-2px);
+        }
+
+        .tab-item.active {
+            color: #3b82f6;
+            background: white;
+            border-color: #e2e8f0;
+            border-bottom: 2px solid white;
+            transform: translateY(2px);
+        }
+
+        .tab-item i {
+            font-size: 1.1rem;
+        }
+
+        .tab-indicator {
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tab-item.active .tab-indicator {
+            opacity: 1;
+        }
+
+        /* PROJECT STATS */
+        .project-stats-section {
+            padding: 30px 40px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        .stat-card.total { --accent-color: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .stat-card.active { --accent-color: linear-gradient(90deg, #10b981, #059669); }
+        .stat-card.completed { --accent-color: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        .stat-card.overdue { --accent-color: linear-gradient(90deg, #ef4444, #dc2626); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: white;
+            background: var(--accent-color);
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        /* VIEW CONTROLS */
+        .view-controls {
+            padding: 30px 40px 20px;
+            background: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .view-toggles {
+            display: flex;
+            gap: 10px;
+        }
+
+        .view-toggle {
+            padding: 10px 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #64748b;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .view-toggle.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .project-filters {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 8px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            color: #64748b;
+        }
+
+        /* KANBAN BOARD */
+        .kanban-section {
+            padding: 30px 40px;
+            min-height: 600px;
+        }
+
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            align-items: start;
+        }
+
+        .kanban-column {
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            min-height: 500px;
+            transition: all 0.3s ease;
+        }
+
+        .kanban-column.drag-over {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .column-header {
+            padding: 20px 25px;
+            border-bottom: 2px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border-radius: 14px 14px 0 0;
+        }
+
+        .column-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .column-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .column-icon.todo { background: linear-gradient(135deg, #6b7280, #4b5563); }
+        .column-icon.progress { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .column-icon.review { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .column-icon.done { background: linear-gradient(135deg, #10b981, #059669); }
+
+        .column-count {
+            background: #e2e8f0;
+            color: #64748b;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .column-tasks {
+            padding: 20px;
+            min-height: 400px;
+        }
+
+        /* TASK CARDS */
+        .task-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            cursor: grab;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .task-card.dragging {
+            opacity: 0.5;
+            transform: rotate(5deg);
+            cursor: grabbing;
+        }
+
+        .task-priority {
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            height: 4px;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .priority-high { background: linear-gradient(90deg, #ef4444, #dc2626); }
+        .priority-medium { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .priority-low { background: linear-gradient(90deg, #10b981, #059669); }
+
+        .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .task-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .task-company {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .task-menu {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .task-menu:hover {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .task-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin-bottom: 15px;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .task-progress {
+            flex: 1;
+            margin-right: 15px;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: #64748b;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        .task-due {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .task-due.overdue {
+            color: #ef4444;
+        }
+
+        .task-due.urgent {
+            color: #f59e0b;
+        }
+
+        .task-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-assignees {
+            display: flex;
+            gap: -8px;
+        }
+
+        .assignee-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 2px solid white;
+            margin-left: -8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .assignee-avatar:first-child {
+            margin-left: 0;
+        }
+
+        .task-tags {
+            display: flex;
+            gap: 6px;
+        }
+
+        .task-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        .tag-frontend { background: #dbeafe; color: #1e40af; }
+        .tag-backend { background: #dcfce7; color: #166534; }
+        .tag-design { background: #fef3c7; color: #92400e; }
+        .tag-urgent { background: #fee2e2; color: #991b1b; }
+
+        /* PROJECT LIST VIEW */
+        .project-list {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin: 30px 40px;
+        }
+
+        .project-list.active {
+            display: block;
+        }
+
+        .list-header {
+            background: #f8fafc;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 20px;
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+
+        .list-item {
+            padding: 20px 30px;
+            border-bottom: 1px solid #f8fafc;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .list-item:hover {
+            background: #fafbfc;
+        }
+
+        .list-item:last-child {
+            border-bottom: none;
+        }
+
+        .project-info h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .project-info p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .status-todo { background: #f1f5f9; color: #64748b; }
+        .status-progress { background: #dbeafe; color: #1e40af; }
+        .status-review { background: #fef3c7; color: #92400e; }
+        .status-done { background: #dcfce7; color: #166534; }
+
+        /* MODALS */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 35px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .modal-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+            transform: scale(1.1);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-weight: 700;
+            color: #374151;
+            font-size: 0.95rem;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #fafbfc;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+            margin-top: 40px;
+            padding-top: 25px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .kanban-board {
+                grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                gap: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .kanban-section {
+                padding: 20px;
+            }
+            
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .list-header,
+            .list-item {
+                grid-template-columns: 1fr auto;
+                gap: 10px;
+            }
+            
+            .list-header > *:nth-child(n+3),
+            .list-item > *:nth-child(n+3) {
+                display: none;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .task-card {
+            animation: slideInUp 0.6s ease forwards;
+        }
+
+        .task-card:nth-child(1) { animation-delay: 0.1s; }
+        .task-card:nth-child(2) { animation-delay: 0.2s; }
+        .task-card:nth-child(3) { animation-delay: 0.3s; }
+        .task-card:nth-child(4) { animation-delay: 0.4s; }
+        .task-card:nth-child(5) { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="employees.html" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="financial.html" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Gestão de Projetos</h2>
+                <p>Controle completo de projetos do Grupo Soluzione Giusta</p>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="exportProjects()">
+                    <i class="fas fa-download"></i>
+                    Exportar
+                </button>
+                <button class="btn btn-success" onclick="openTaskModal()">
+                    <i class="fas fa-plus"></i>
+                    Nova Tarefa
+                </button>
+                <button class="btn btn-primary" onclick="openProjectModal()">
+                    <i class="fas fa-folder-plus"></i>
+                    Novo Projeto
+                </button>
+            </div>
+        </header>
+
+        <!-- COMPANY TABS -->
+        <section class="project-tabs-section">
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <div class="tab-item active" onclick="switchCompany('all')" data-company="all">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Todos os Projetos</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('soluzione-giusta')" data-company="soluzione-giusta">
+                        <i class="fas fa-building"></i>
+                        <span>Soluzione Giusta</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('innovativa-comunicazione')" data-company="innovativa-comunicazione">
+                        <i class="fas fa-bullhorn"></i>
+                        <span>Innovativa</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('disbrigo-facile')" data-company="disbrigo-facile">
+                        <i class="fas fa-handshake"></i>
+                        <span>Disbrigo Facile</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('mavie')" data-company="mavie">
+                        <i class="fas fa-heart"></i>
+                        <span>Mavie</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('vero-construcao')" data-company="vero-construcao">
+                        <i class="fas fa-hard-hat"></i>
+                        <span>Vero Construção</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('via-giusta')" data-company="via-giusta">
+                        <i class="fas fa-truck"></i>
+                        <span>Premium Logística</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                    <div class="tab-item" onclick="switchCompany('meu-acesso')" data-company="meu-acesso">
+                        <i class="fas fa-key"></i>
+                        <span>Meu Acesso</span>
+                        <div class="tab-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT STATS -->
+        <section class="project-stats-section">
+            <div class="stats-grid" id="projectStats">
+                <!-- Stats serão carregados aqui -->
+            </div>
+        </section>
+
+        <!-- VIEW CONTROLS -->
+        <section class="view-controls">
+            <div class="view-toggles">
+                <div class="view-toggle active" onclick="switchView('kanban')">
+                    <i class="fas fa-columns"></i>
+                    Kanban
+                </div>
+                <div class="view-toggle" onclick="switchView('list')">
+                    <i class="fas fa-list"></i>
+                    Lista
+                </div>
+            </div>
+            <div class="project-filters">
+                <select class="filter-select" id="priorityFilter" onchange="applyFilters()">
+                    <option value="">Todas as Prioridades</option>
+                    <option value="high">Alta Prioridade</option>
+                    <option value="medium">Média Prioridade</option>
+                    <option value="low">Baixa Prioridade</option>
+                </select>
+                <select class="filter-select" id="assigneeFilter" onchange="applyFilters()">
+                    <option value="">Todos os Responsáveis</option>
+                    <option value="pedro">Pedro Fraquete</option>
+                    <option value="andre">André Luiz</option>
+                    <option value="caroline">Caroline Lanzilotti</option>
+                    <option value="camila">Camila Mantovani</option>
+                </select>
+            </div>
+        </section>
+
+        <!-- KANBAN BOARD -->
+        <section class="kanban-section" id="kanbanView">
+            <div class="kanban-board">
+                <div class="kanban-column" data-status="todo">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-icon todo">
+                                <i class="fas fa-clipboard-list"></i>
+                            </div>
+                            Para Fazer
+                        </div>
+                        <div class="column-count" id="todoCount">0</div>
+                    </div>
+                    <div class="column-tasks" id="todoTasks">
+                        <!-- Tasks serão carregadas aqui -->
+                    </div>
+                </div>
+
+                <div class="kanban-column" data-status="progress">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-icon progress">
+                                <i class="fas fa-play-circle"></i>
+                            </div>
+                            Em Progresso
+                        </div>
+                        <div class="column-count" id="progressCount">0</div>
+                    </div>
+                    <div class="column-tasks" id="progressTasks">
+                        <!-- Tasks serão carregadas aqui -->
+                    </div>
+                </div>
+
+                <div class="kanban-column" data-status="review">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-icon review">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                            Em Revisão
+                        </div>
+                        <div class="column-count" id="reviewCount">0</div>
+                    </div>
+                    <div class="column-tasks" id="reviewTasks">
+                        <!-- Tasks serão carregadas aqui -->
+                    </div>
+                </div>
+
+                <div class="kanban-column" data-status="done">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <div class="column-icon done">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            Concluído
+                        </div>
+                        <div class="column-count" id="doneCount">0</div>
+                    </div>
+                    <div class="column-tasks" id="doneTasks">
+                        <!-- Tasks serão carregadas aqui -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROJECT LIST -->
+        <section class="project-list" id="listView">
+            <div class="list-header">
+                <div>Projeto</div>
+                <div>Status</div>
+                <div>Progresso</div>
+                <div>Responsável</div>
+                <div>Prazo</div>
+                <div>Ações</div>
+            </div>
+            <div id="projectListContent">
+                <!-- Lista será carregada aqui -->
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL NOVO PROJETO -->
+    <div class="modal" id="projectModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Novo Projeto</h3>
+                <button class="modal-close" onclick="closeModal('projectModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="projectForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Nome do Projeto</label>
+                        <input type="text" class="form-input" id="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Empresa</label>
+                        <select class="form-select" id="projectCompany" required>
+                            <option value="">Selecione...</option>
+                            <option value="soluzione-giusta">Soluzione Giusta</option>
+                            <option value="innovativa-comunicazione">Innovativa Comunicazione</option>
+                            <option value="disbrigo-facile">Disbrigo Facile</option>
+                            <option value="mavie">Mavie</option>
+                            <option value="vero-construcao">Vero Construção</option>
+                            <option value="via-giusta">Premium Logística</option>
+                            <option value="meu-acesso">Meu Acesso</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gerente do Projeto</label>
+                        <select class="form-select" id="projectManager" required>
+                            <option value="">Selecione...</option>
+                            <option value="pedro">Pedro Fraquete</option>
+                            <option value="andre">André Luiz Fernandes</option>
+                            <option value="caroline">Caroline Lanzilotti</option>
+                            <option value="camila">Camila Mantovani</option>
+                            <option value="fernando">Fernando</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-select" id="projectPriority" required>
+                            <option value="low">Baixa</option>
+                            <option value="medium" selected>Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data de Início</label>
+                        <input type="date" class="form-input" id="projectStartDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data de Entrega</label>
+                        <input type="date" class="form-input" id="projectEndDate" required>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-textarea" id="projectDescription" rows="4"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('projectModal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Criar Projeto
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL NOVA TAREFA -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Nova Tarefa</h3>
+                <button class="modal-close" onclick="closeModal('taskModal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="taskForm">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label">Título da Tarefa</label>
+                        <input type="text" class="form-input" id="taskTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Projeto</label>
+                        <select class="form-select" id="taskProject" required>
+                            <option value="">Selecione...</option>
+                            <!-- Será preenchido dinamicamente -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Responsável</label>
+                        <select class="form-select" id="taskAssignee" required>
+                            <option value="">Selecione...</option>
+                            <option value="pedro">Pedro Fraquete</option>
+                            <option value="andre">André Luiz Fernandes</option>
+                            <option value="caroline">Caroline Lanzilotti</option>
+                            <option value="camila">Camila Mantovani</option>
+                            <option value="leonardo">Leonardo</option>
+                            <option value="fernando">Fernando</option>
+                            <option value="samuel">Samuel</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-select" id="taskPriority" required>
+                            <option value="low">Baixa</option>
+                            <option value="medium" selected>Média</option>
+                            <option value="high">Alta</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data de Entrega</label>
+                        <input type="date" class="form-input" id="taskDueDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="taskStatus" required>
+                            <option value="todo" selected>Para Fazer</option>
+                            <option value="progress">Em Progresso</option>
+                            <option value="review">Em Revisão</option>
+                            <option value="done">Concluído</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label class="form-label">Descrição</label>
+                        <textarea class="form-textarea" id="taskDescription" rows="3"></textarea>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('taskModal')">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Criar Tarefa
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // DADOS DOS PROJETOS E TAREFAS
+        // =================================================================
+
+        const companiesData = {
+            'all': { name: 'Todos os Projetos' },
+            'soluzione-giusta': { name: 'Soluzione Giusta' },
+            'innovativa-comunicazione': { name: 'Innovativa Comunicazione' },
+            'disbrigo-facile': { name: 'Disbrigo Facile' },
+            'mavie': { name: 'Mavie' },
+            'vero-construcao': { name: 'Vero Construção' },
+            'via-giusta': { name: 'Premium Logística' },
+            'meu-acesso': { name: 'Meu Acesso' }
+        };
+
+        let projects = [
+            {
+                id: 1,
+                name: 'Sistema ERP Journey 100k',
+                company: 'soluzione-giusta',
+                manager: 'pedro',
+                status: 'progress',
+                priority: 'high',
+                startDate: '2025-08-01',
+                endDate: '2025-10-30',
+                description: 'Desenvolvimento do sistema ERP completo para o grupo',
+                progress: 75
+            },
+            {
+                id: 2,
+                name: 'Campanha Digital Premium',
+                company: 'innovativa-comunicazione',
+                manager: 'caroline',
+                status: 'progress',
+                priority: 'medium',
+                startDate: '2025-09-01',
+                endDate: '2025-09-30',
+                description: 'Campanha de marketing digital para cliente premium',
+                progress: 60
+            },
+            {
+                id: 3,
+                name: 'Consultoria Empresarial ABC',
+                company: 'disbrigo-facile',
+                manager: 'camila',
+                status: 'review',
+                priority: 'high',
+                startDate: '2025-08-15',
+                endDate: '2025-09-25',
+                description: 'Projeto de consultoria para reestruturação empresarial',
+                progress: 85
+            },
+            {
+                id: 4,
+                name: 'App Mobile Mavie',
+                company: 'mavie',
+                manager: 'fernando',
+                status: 'todo',
+                priority: 'medium',
+                startDate: '2025-10-01',
+                endDate: '2025-12-15',
+                description: 'Aplicativo mobile para produtos lifestyle',
+                progress: 15
+            },
+            {
+                id: 5,
+                name: 'Obra Residencial Fase 1',
+                company: 'vero-construcao',
+                manager: 'pedro',
+                status: 'progress',
+                priority: 'high',
+                startDate: '2025-07-01',
+                endDate: '2025-11-30',
+                description: 'Construção de complexo residencial',
+                progress: 40
+            },
+            {
+                id: 6,
+                name: 'Sistema Logístico Premium',
+                company: 'via-giusta',
+                manager: 'andre',
+                status: 'todo',
+                priority: 'medium',
+                startDate: '2025-10-15',
+                endDate: '2026-01-15',
+                description: 'Sistema de gestão logística premium',
+                progress: 10
+            },
+            {
+                id: 7,
+                name: 'Portal Meu Acesso 2.0',
+                company: 'meu-acesso',
+                manager: 'fernando',
+                status: 'progress',
+                priority: 'high',
+                startDate: '2025-08-20',
+                endDate: '2025-10-20',
+                description: 'Nova versão do portal de acesso digital',
+                progress: 55
+            }
+        ];
+
+        let tasks = [
+            // Sistema ERP Journey 100k
+            {
+                id: 1,
+                projectId: 1,
+                title: 'Implementar autenticação',
+                description: 'Sistema de login com Supabase',
+                assignee: 'andre',
+                status: 'done',
+                priority: 'high',
+                dueDate: '2025-09-15',
+                progress: 100,
+                tags: ['backend', 'urgent']
+            },
+            {
+                id: 2,
+                projectId: 1,
+                title: 'Dashboard principal',
+                description: 'Interface principal do sistema',
+                assignee: 'samuel',
+                status: 'progress',
+                priority: 'high',
+                dueDate: '2025-09-25',
+                progress: 80,
+                tags: ['frontend', 'design']
+            },
+            {
+                id: 3,
+                projectId: 1,
+                title: 'Módulo financeiro',
+                description: 'Gestão financeira por empresa',
+                assignee: 'leonardo',
+                status: 'review',
+                priority: 'high',
+                dueDate: '2025-09-30',
+                progress: 90,
+                tags: ['backend']
+            },
+            // Campanha Digital Premium
+            {
+                id: 4,
+                projectId: 2,
+                title: 'Criação de conteúdo',
+                description: 'Posts e materiais visuais',
+                assignee: 'caroline',
+                status: 'progress',
+                priority: 'medium',
+                dueDate: '2025-09-28',
+                progress: 70,
+                tags: ['design', 'marketing']
+            },
+            {
+                id: 5,
+                projectId: 2,
+                title: 'Configuração Google Ads',
+                description: 'Campanhas pagas online',
+                assignee: 'caroline',
+                status: 'todo',
+                priority: 'medium',
+                dueDate: '2025-09-30',
+                progress: 20,
+                tags: ['marketing']
+            },
+            // Consultoria Empresarial ABC
+            {
+                id: 6,
+                projectId: 3,
+                title: 'Diagnóstico empresarial',
+                description: 'Análise completa da empresa cliente',
+                assignee: 'camila',
+                status: 'done',
+                priority: 'high',
+                dueDate: '2025-09-10',
+                progress: 100,
+                tags: ['consultoria']
+            },
+            {
+                id: 7,
+                projectId: 3,
+                title: 'Relatório final',
+                description: 'Documento com recomendações',
+                assignee: 'camila',
+                status: 'review',
+                priority: 'high',
+                dueDate: '2025-09-25',
+                progress: 85,
+                tags: ['consultoria', 'urgent']
+            },
+            // Portal Meu Acesso 2.0
+            {
+                id: 8,
+                projectId: 7,
+                title: 'Nova interface',
+                description: 'Redesign da interface do usuário',
+                assignee: 'samuel',
+                status: 'progress',
+                priority: 'high',
+                dueDate: '2025-10-05',
+                progress: 60,
+                tags: ['frontend', 'design']
+            },
+            {
+                id: 9,
+                projectId: 7,
+                title: 'Integração APIs',
+                description: 'Conectar com serviços externos',
+                assignee: 'fernando',
+                status: 'todo',
+                priority: 'medium',
+                dueDate: '2025-10-15',
+                progress: 25,
+                tags: ['backend']
+            }
+        ];
+
+        let currentCompany = 'all';
+        let currentView = 'kanban';
+        let filteredTasks = [...tasks];
+
+        // =================================================================
+        // FUNCIONALIDADES PRINCIPAIS
+        // =================================================================
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        function switchCompany(companyId) {
+            currentCompany = companyId;
+            
+            // Atualizar tabs
+            document.querySelectorAll('.tab-item').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-company="${companyId}"]`).classList.add('active');
+            
+            // Aplicar filtros
+            applyFilters();
+            
+            // Atualizar estatísticas
+            updateProjectStats();
+            
+            showNotification(`Visualizando: ${companiesData[companyId].name}`, 'info');
+        }
+
+        function switchView(view) {
+            currentView = view;
+            
+            // Atualizar botões
+            document.querySelectorAll('.view-toggle').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[onclick="switchView('${view}')"]`).classList.add('active');
+            
+            // Mostrar/ocultar views
+            if (view === 'kanban') {
+                document.getElementById('kanbanView').style.display = 'block';
+                document.getElementById('listView').classList.remove('active');
+            } else {
+                document.getElementById('kanbanView').style.display = 'none';
+                document.getElementById('listView').classList.add('active');
+                renderProjectList();
+            }
+        }
+
+        function applyFilters() {
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const assigneeFilter = document.getElementById('assigneeFilter').value;
+            
+            let filtered = [...tasks];
+            
+            // Filtrar por empresa
+            if (currentCompany !== 'all') {
+                const companyProjects = projects.filter(p => p.company === currentCompany).map(p => p.id);
+                filtered = filtered.filter(t => companyProjects.includes(t.projectId));
+            }
+            
+            // Filtrar por prioridade
+            if (priorityFilter) {
+                filtered = filtered.filter(t => t.priority === priorityFilter);
+            }
+            
+            // Filtrar por responsável
+            if (assigneeFilter) {
+                filtered = filtered.filter(t => t.assignee === assigneeFilter);
+            }
+            
+            filteredTasks = filtered;
+            
+            if (currentView === 'kanban') {
+                renderKanbanBoard();
+            } else {
+                renderProjectList();
+            }
+        }
+
+        // =================================================================
+        // KANBAN BOARD
+        // =================================================================
+
+        function renderKanbanBoard() {
+            const columns = ['todo', 'progress', 'review', 'done'];
+            
+            columns.forEach(status => {
+                const container = document.getElementById(status + 'Tasks');
+                const tasks = filteredTasks.filter(t => t.status === status);
+                
+                container.innerHTML = tasks.map(task => createTaskCard(task)).join('');
+                
+                // Atualizar contador
+                document.getElementById(status + 'Count').textContent = tasks.length;
+            });
+            
+            // Inicializar drag & drop
+            initializeDragAndDrop();
+        }
+
+        function createTaskCard(task) {
+            const project = projects.find(p => p.id === task.projectId);
+            const isOverdue = new Date(task.dueDate) < new Date() && task.status !== 'done';
+            const isUrgent = new Date(task.dueDate) <= new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+            
+            return `
+                <div class="task-card" data-task-id="${task.id}" draggable="true">
+                    <div class="task-priority priority-${task.priority}"></div>
+                    <div class="task-header">
+                        <div>
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-company">${project ? project.name : 'Projeto não encontrado'}</div>
+                        </div>
+                        <button class="task-menu" onclick="showTaskMenu(${task.id})">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                    
+                    ${task.description ? `<div class="task-description">${task.description}</div>` : ''}
+                    
+                    <div class="task-meta">
+                        <div class="task-progress">
+                            <div class="progress-label">
+                                <span>Progresso</span>
+                                <span>${task.progress}%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${task.progress}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="task-footer">
+                        <div class="task-assignees">
+                            <div class="assignee-avatar">${getInitials(task.assignee)}</div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 5px;">
+                            <div class="task-due ${isOverdue ? 'overdue' : isUrgent ? 'urgent' : ''}">
+                                <i class="fas fa-calendar"></i>
+                                ${formatDate(task.dueDate)}
+                            </div>
+                            <div class="task-tags">
+                                ${task.tags.map(tag => `<span class="task-tag tag-${tag}">${tag}</span>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function initializeDragAndDrop() {
+            // Configurar colunas como drop zones
+            document.querySelectorAll('.column-tasks').forEach(column => {
+                new Sortable(column, {
+                    group: 'kanban',
+                    animation: 150,
+                    ghostClass: 'task-card-ghost',
+                    chosenClass: 'task-card-chosen',
+                    dragClass: 'dragging',
+                    onEnd: function(evt) {
+                        const taskId = parseInt(evt.item.dataset.taskId);
+                        const newStatus = evt.to.parentElement.dataset.status;
+                        updateTaskStatus(taskId, newStatus);
+                    }
+                });
+            });
+        }
+
+        function updateTaskStatus(taskId, newStatus) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.status = newStatus;
+                
+                // Atualizar progresso baseado no status
+                if (newStatus === 'done' && task.progress < 100) {
+                    task.progress = 100;
+                } else if (newStatus === 'review' && task.progress < 80) {
+                    task.progress = 80;
+                } else if (newStatus === 'progress' && task.progress < 30) {
+                    task.progress = 30;
+                }
+                
+                applyFilters(); // Re-renderizar
+                updateProjectStats();
+                
+                showNotification(`Tarefa "${task.title}" movida para ${getStatusName(newStatus)}`, 'success');
+            }
+        }
+
+        // =================================================================
+        // PROJECT LIST VIEW
+        // =================================================================
+
+        function renderProjectList() {
+            const container = document.getElementById('projectListContent');
+            const projectsToShow = currentCompany === 'all' ? 
+                projects : projects.filter(p => p.company === currentCompany);
+            
+            container.innerHTML = projectsToShow.map(project => {
+                const isOverdue = new Date(project.endDate) < new Date() && project.status !== 'done';
+                
+                return `
+                    <div class="list-item">
+                        <div class="project-info">
+                            <h4>${project.name}</h4>
+                            <p>${companiesData[project.company].name}</p>
+                        </div>
+                        <div>
+                            <span class="status-badge status-${project.status}">
+                                ${getStatusName(project.status)}
+                            </span>
+                        </div>
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="flex: 1; background: #e2e8f0; border-radius: 10px; height: 8px;">
+                                    <div style="width: ${project.progress}%; height: 100%; background: linear-gradient(90deg, #3b82f6, #1d4ed8); border-radius: 10px;"></div>
+                                </div>
+                                <span style="font-weight: 600; color: #64748b; font-size: 0.9rem;">${project.progress}%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="assignee-avatar" style="margin: 0;">${getInitials(project.manager)}</div>
+                        </div>
+                        <div>
+                            <span class="task-due ${isOverdue ? 'overdue' : ''}">
+                                ${formatDate(project.endDate)}
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="editProject(${project.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button class="btn btn-primary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewProjectDetails(${project.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // =================================================================
+        // ESTATÍSTICAS DOS PROJETOS
+        // =================================================================
+
+        function updateProjectStats() {
+            const projectsToCount = currentCompany === 'all' ? 
+                projects : projects.filter(p => p.company === currentCompany);
+            
+            const tasksToCount = currentCompany === 'all' ? 
+                tasks : tasks.filter(t => {
+                    const project = projects.find(p => p.id === t.projectId);
+                    return project && project.company === currentCompany;
+                });
+            
+            const stats = {
+                total: projectsToCount.length,
+                active: projectsToCount.filter(p => p.status === 'progress').length,
+                completed: projectsToCount.filter(p => p.status === 'done').length,
+                overdue: projectsToCount.filter(p => new Date(p.endDate) < new Date() && p.status !== 'done').length
+            };
+            
+            const container = document.getElementById('projectStats');
+            container.innerHTML = `
+                <div class="stat-card total">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.total}</div>
+                    <div class="stat-label">Total de Projetos</div>
+                </div>
+                
+                <div class="stat-card active">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-play-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.active}</div>
+                    <div class="stat-label">Em Progresso</div>
+                </div>
+                
+                <div class="stat-card completed">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.completed}</div>
+                    <div class="stat-label">Concluídos</div>
+                </div>
+                
+                <div class="stat-card overdue">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">${stats.overdue}</div>
+                    <div class="stat-label">Atrasados</div>
+                </div>
+            `;
+        }
+
+        // =================================================================
+        // MODALS
+        // =================================================================
+
+        function openProjectModal() {
+            document.getElementById('projectModal').classList.add('show');
+            
+            // Pré-selecionar empresa atual se não for "all"
+            if (currentCompany !== 'all') {
+                document.getElementById('projectCompany').value = currentCompany;
+            }
+        }
+
+        function openTaskModal() {
+            document.getElementById('taskModal').classList.add('show');
+            
+            // Preencher select de projetos
+            const projectSelect = document.getElementById('taskProject');
+            const projectsToShow = currentCompany === 'all' ? 
+                projects : projects.filter(p => p.company === currentCompany);
+            
+            projectSelect.innerHTML = '<option value="">Selecione...</option>' + 
+                projectsToShow.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // =================================================================
+        // UTILIDADES
+        // =================================================================
+
+        function getInitials(name) {
+            const names = {
+                'pedro': 'PF',
+                'andre': 'AF',
+                'caroline': 'CS',
+                'camila': 'CM',
+                'leonardo': 'LE',
+                'fernando': 'FE',
+                'samuel': 'SA'
+            };
+            return names[name] || name.substring(0, 2).toUpperCase();
+        }
+
+        function getStatusName(status) {
+            const statusNames = {
+                'todo': 'Para Fazer',
+                'progress': 'Em Progresso',
+                'review': 'Em Revisão',
+                'done': 'Concluído'
+            };
+            return statusNames[status] || status;
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('pt-BR');
+        }
+
+        function showNotification(message, type) {
+            // Simular notificação - implementar sistema real depois
+            console.log(`${type.toUpperCase()}: ${message}`);
+        }
+
+        function showTaskMenu(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            alert(`Menu da tarefa: ${task.title}\n\n✏️ Editar\n👁️ Visualizar\n🗑️ Excluir\n\n(Menu completo em desenvolvimento)`);
+        }
+
+        function editProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            alert(`Editando projeto: ${project.name}\n\n(Modal de edição em desenvolvimento)`);
+        }
+
+        function viewProjectDetails(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            const projectTasks = tasks.filter(t => t.projectId === projectId);
+            
+            alert(`Detalhes do Projeto: ${project.name}\n\n` +
+                  `Empresa: ${companiesData[project.company].name}\n` +
+                  `Gerente: ${getInitials(project.manager)}\n` +
+                  `Status: ${getStatusName(project.status)}\n` +
+                  `Progresso: ${project.progress}%\n` +
+                  `Prazo: ${formatDate(project.endDate)}\n` +
+                  `Tarefas: ${projectTasks.length}\n\n` +
+                  `(Modal detalhado em desenvolvimento)`);
+        }
+
+        function exportProjects() {
+            showNotification('Exportando projetos...\n\n✅ Dados completos\n✅ Formato Excel\n📊 Gráficos inclusos', 'info');
+        }
+
+        // =================================================================
+        // EVENT LISTENERS
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar visualização
+            switchCompany('all');
+            updateProjectStats();
+            renderKanbanBoard();
+            
+            // Event listeners dos formulários
+            document.getElementById('projectForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newProject = {
+                    id: projects.length + 1,
+                    name: document.getElementById('projectName').value,
+                    company: document.getElementById('projectCompany').value,
+                    manager: document.getElementById('projectManager').value,
+                    priority: document.getElementById('projectPriority').value,
+                    startDate: document.getElementById('projectStartDate').value,
+                    endDate: document.getElementById('projectEndDate').value,
+                    description: document.getElementById('projectDescription').value,
+                    status: 'todo',
+                    progress: 0
+                };
+                
+                projects.push(newProject);
+                
+                showNotification(`Projeto "${newProject.name}" criado com sucesso!`, 'success');
+                closeModal('projectModal');
+                applyFilters();
+                updateProjectStats();
+                
+                // Limpar formulário
+                document.getElementById('projectForm').reset();
+            });
+            
+            document.getElementById('taskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newTask = {
+                    id: tasks.length + 1,
+                    projectId: parseInt(document.getElementById('taskProject').value),
+                    title: document.getElementById('taskTitle').value,
+                    description: document.getElementById('taskDescription').value,
+                    assignee: document.getElementById('taskAssignee').value,
+                    status: document.getElementById('taskStatus').value,
+                    priority: document.getElementById('taskPriority').value,
+                    dueDate: document.getElementById('taskDueDate').value,
+                    progress: document.getElementById('taskStatus').value === 'done' ? 100 : 
+                            document.getElementById('taskStatus').value === 'review' ? 80 :
+                            document.getElementById('taskStatus').value === 'progress' ? 30 : 0,
+                    tags: []
+                };
+                
+                tasks.push(newTask);
+                
+                showNotification(`Tarefa "${newTask.title}" criada com sucesso!`, 'success');
+                closeModal('taskModal');
+                applyFilters();
+                updateProjectStats();
+                
+                // Limpar formulário
+                document.getElementById('taskForm').reset();
+            });
+            
+            // Fechar modals ao clicar fora
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('show');
+                    }
+                });
+            });
+            
+            console.log('🚀 Módulo de Projetos carregado!');
+            console.log('📋 Kanban board ativo');
+            console.log('🏢 7 empresas configuradas');
+            console.log('✅ Drag & drop funcionando');
+        });
+
+        // =================================================================
+        // SUPABASE INTEGRATION (COMENTADO PARA USO FUTURO)
+        // =================================================================
+
+        /*
+        // Carregar projetos do Supabase
+        async function loadProjectsFromSupabase() {
+            try {
+                const { data: projectsData, error } = await supabase
+                    .from('projects')
+                    .select(`
+                        *,
+                        companies (
+                            name
+                        ),
+                        profiles!projects_manager_id_fkey (
+                            full_name
+                        )
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                projects = projectsData.map(p => ({
+                    id: p.id,
+                    name: p.name,
+                    company: p.company_id,
+                    manager: p.manager_id,
+                    status: p.status,
+                    priority: p.priority,
+                    startDate: p.start_date,
+                    endDate: p.end_date,
+                    description: p.description,
+                    progress: p.progress || 0
+                }));
+
+                applyFilters();
+                updateProjectStats();
+
+            } catch (error) {
+                console.error('Erro ao carregar projetos:', error);
+                showNotification('Erro ao carregar projetos', 'error');
+            }
+        }
+
+        // Carregar tarefas do Supabase
+        async function loadTasksFromSupabase() {
+            try {
+                const { data: tasksData, error } = await supabase
+                    .from('tasks')
+                    .select(`
+                        *,
+                        projects (
+                            name,
+                            company_id
+                        ),
+                        profiles!tasks_assignee_id_fkey (
+                            full_name
+                        )
+                    `)
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                tasks = tasksData.map(t => ({
+                    id: t.id,
+                    projectId: t.project_id,
+                    title: t.title,
+                    description: t.description,
+                    assignee: t.assignee_id,
+                    status: t.status,
+                    priority: t.priority,
+                    dueDate: t.due_date,
+                    progress: t.progress || 0,
+                    tags: t.tags || []
+                }));
+
+                applyFilters();
+
+            } catch (error) {
+                console.error('Erro ao carregar tarefas:', error);
+                showNotification('Erro ao carregar tarefas', 'error');
+            }
+        }
+
+        // Salvar projeto no Supabase
+        async function saveProject(projectData) {
+            try {
+                const { data, error } = await supabase
+                    .from('projects')
+                    .insert([{
+                        name: projectData.name,
+                        company_id: projectData.company,
+                        manager_id: projectData.manager,
+                        priority: projectData.priority,
+                        start_date: projectData.startDate,
+                        end_date: projectData.endDate,
+                        description: projectData.description,
+                        status: 'todo',
+                        progress: 0
+                    }]);
+
+                if (error) throw error;
+
+                showNotification('Projeto salvo com sucesso!', 'success');
+                loadProjectsFromSupabase(); // Recarregar dados
+
+            } catch (error) {
+                console.error('Erro ao salvar projeto:', error);
+                showNotification('Erro ao salvar projeto', 'error');
+            }
+        }
+
+        // Atualizar status da tarefa no Supabase
+        async function updateTaskStatusInSupabase(taskId, newStatus, progress) {
+            try {
+                const { data, error } = await supabase
+                    .from('tasks')
+                    .update({ 
+                        status: newStatus,
+                        progress: progress,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', taskId);
+
+                if (error) throw error;
+
+                console.log('Status da tarefa atualizado no Supabase');
+
+            } catch (error) {
+                console.error('Erro ao atualizar status da tarefa:', error);
+                showNotification('Erro ao atualizar tarefa', 'error');
+            }
+        }
+        */
+    </script>
+</body>
+</html>

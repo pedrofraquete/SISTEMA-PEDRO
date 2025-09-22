@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamificação - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* GAMIFICATION CONTENT */
+        .gamification-content {
+            padding: 40px;
+        }
+
+        /* PLAYER PROFILE */
+        .player-profile {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .player-profile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .profile-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 800;
+            border: 4px solid rgba(255,255,255,0.3);
+        }
+
+        .profile-info h2 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .profile-role {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+        }
+
+        .profile-level {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .level-badge {
+            padding: 8px 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .xp-bar {
+            flex: 1;
+            height: 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .xp-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            border-radius: 6px;
+            width: 73%;
+            transition: width 0.3s ease;
+        }
+
+        .xp-text {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            text-align: center;
+        }
+
+        .profile-stat {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* ACHIEVEMENTS SECTION */
+        .achievements-section {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .achievements-main {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .achievement-card {
+            padding: 20px;
+            border: 2px solid #f1f5f9;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .achievement-card.unlocked {
+            border-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb, #fef3c7);
+            transform: scale(1.02);
+        }
+
+        .achievement-card.locked {
+            opacity: 0.6;
+            background: #f8fafc;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .achievement-card.unlocked .achievement-icon {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .achievement-card.locked .achievement-icon {
+            background: #94a3b8;
+        }
+
+        @keyframes glow {
+            from { box-shadow: 0 0 10px rgba(245, 158, 11, 0.5); }
+            to { box-shadow: 0 0 20px rgba(245, 158, 11, 0.8); }
+        }
+
+        .achievement-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .achievement-description {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .achievement-progress {
+            font-size: 0.8rem;
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .unlock-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(245, 158, 11, 0.3), transparent);
+            animation: unlock-shine 0.6s ease-out;
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        @keyframes unlock-shine {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* LEADERBOARD */
+        .leaderboard-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .leaderboard-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .leaderboard-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-radius: 12px;
+            background: #f8fafc;
+            transition: all 0.3s ease;
+        }
+
+        .leaderboard-item.current-user {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            border: 2px solid #3b82f6;
+        }
+
+        .leaderboard-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .rank-position {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #64748b, #475569);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-item:nth-child(1) .rank-position {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        }
+
+        .leaderboard-item:nth-child(2) .rank-position {
+            background: linear-gradient(135deg, #94a3b8, #64748b);
+        }
+
+        .leaderboard-item:nth-child(3) .rank-position {
+            background: linear-gradient(135deg, #cd7c0f, #92400e);
+        }
+
+        .leaderboard-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .leaderboard-info {
+            flex: 1;
+        }
+
+        .leaderboard-name {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .leaderboard-role {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .leaderboard-points {
+            font-weight: 700;
+            color: #f59e0b;
+            font-size: 1.1rem;
+        }
+
+        /* CHALLENGES SECTION */
+        .challenges-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .challenge-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-card.daily { border-color: #10b981; }
+        .challenge-card.weekly { border-color: #3b82f6; }
+        .challenge-card.monthly { border-color: #8b5cf6; }
+
+        .challenge-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+
+        .challenge-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .challenge-type {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .challenge-card.daily .challenge-type {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .challenge-card.weekly .challenge-type {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .challenge-card.monthly .challenge-type {
+            background: #ede9fe;
+            color: #6b21a8;
+        }
+
+        .challenge-reward {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .challenge-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .challenge-description {
+            color: #64748b;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .challenge-progress {
+            margin-bottom: 20px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .progress-percentage {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .challenge-card.daily .progress-fill {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .challenge-card.weekly .progress-fill {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+
+        .challenge-card.monthly .progress-fill {
+            background: linear-gradient(90deg, #8b5cf6, #7c3aed);
+        }
+
+        .challenge-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .challenge-deadline {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .challenge-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .challenge-btn.complete {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .challenge-btn.completed {
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        .challenge-btn:hover:not(.completed) {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* RECENT ACTIVITIES */
+        .activity-feed {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .activity-icon.achievement {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .activity-icon.level {
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+
+        .activity-icon.challenge {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .activity-icon.project {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .activity-description {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        .activity-points {
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .achievements-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            
+            .challenges-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .gamification-content {
+                padding: 20px;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .achievement-card,
+        .challenge-card,
+        .leaderboard-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .achievement-card:nth-child(1) { animation-delay: 0.1s; }
+        .achievement-card:nth-child(2) { animation-delay: 0.2s; }
+        .achievement-card:nth-child(3) { animation-delay: 0.3s; }
+        .achievement-card:nth-child(4) { animation-delay: 0.4s; }
+        .achievement-card:nth-child(5) { animation-delay: 0.5s; }
+        .achievement-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* NOTIFICATION DOT */
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* PARTICLES EFFECT */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        .particle {
+            position: absolute;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: particle-float 3s ease-out forwards;
+        }
+
+        @keyframes particle-float {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) scale(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Centro de Gamificação</h2>
+                <p>Sistema de motivação e engajamento da equipe - Journey 100k</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">PF</div>
+                    <div class="user-details">
+                        <h4>Pedro Fraquete</h4>
+                        <p>CEO • Nível 15</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- GAMIFICATION CONTENT -->
+        <div class="gamification-content">
+            <!-- PLAYER PROFILE -->
+            <div class="player-profile">
+                <div class="profile-content">
+                    <div class="profile-avatar">PF</div>
+                    
+                    <div class="profile-info">
+                        <h2>Pedro Fraquete</h2>
+                        <div class="profile-role">CEO • Líder da Revolução</div>
+                        
+                        <div class="profile-level">
+                            <div class="level-badge">Nível 15</div>
+                            <div class="xp-bar">
+                                <div class="xp-fill"></div>
+                            </div>
+                            <div class="xp-text">7,350 / 10,000 XP</div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="stat-value">47,890</div>
+                            <div class="stat-label">Pontos Totais</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">23</div>
+                            <div class="stat-label">Conquistas</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">1°</div>
+                            <div class="stat-label">Ranking</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACHIEVEMENTS SECTION -->
+            <div class="achievements-section">
+                <div class="achievements-main">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <div class="section-icon">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                            Conquistas Desbloqueadas
+                        </h3>
+                        <span style="color: #64748b; font-size: 0.9rem;">23 de 45 conquistadas</span>
+                    </div>
+
+                    <div class="achievements-grid">
+                        <div class="achievement-card unlocked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-crown"></i>
+                            </div>
+                            <h4 class="achievement-title">CEO Visionário</h4>
+                            <p class="achievement-description">Lidere a empresa por 365 dias consecutivos</p>
+                            <div class="achievement-progress">Conquistado!</div>
+                        </div>
+
+                        <div class="achievement-card unlocked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h4 class="achievement-title">Inovador</h4>
+                            <p class="achievement-description">Implemente 5 sistemas revolucionários</p>
+                            <div class="achievement-progress">5/5 sistemas</div>
+                        </div>
+
+                        <div class="achievement-card unlocked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <h4 class="achievement-title">Construtor de Equipes</h4>
+                            <p class="achievement-description">Contrate 25 funcionários talentosos</p>
+                            <div class="achievement-progress">29/25 funcionários</div>
+                        </div>
+
+                        <div class="achievement-card unlocked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h4 class="achievement-title">Mestre do Crescimento</h4>
+                            <p class="achievement-description">Alcance R$ 2M em faturamento mensal</p>
+                            <div class="achievement-progress">R$ 2,8M atingidos</div>
+                        </div>
+
+                        <div class="achievement-card locked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-globe"></i>
+                            </div>
+                            <h4 class="achievement-title">Expansão Global</h4>
+                            <p class="achievement-description">Abra filiais em 3 países diferentes</p>
+                            <div class="achievement-progress">1/3 países</div>
+                        </div>
+
+                        <div class="achievement-card locked">
+                            <div class="achievement-icon">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            <h4 class="achievement-title">Hall da Fama</h4>
+                            <p class="achievement-description">Alcance 100,000 pontos totais</p>
+                            <div class="achievement-progress">47,890/100,000</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEADERBOARD -->
+                <div class="leaderboard-card">
+                    <div class="section-header">
+                        <h3 class="section-title">
+                            <div class="section-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">
+                                <i class="fas fa-medal"></i>
+                            </div>
+                            Ranking da Equipe
+                        </h3>
+                    </div>
+
+                    <div class="leaderboard-list">
+                        <div class="leaderboard-item current-user">
+                            <div class="rank-position">1</div>
+                            <div class="leaderboard-avatar">PF</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Pedro Fraquete</div>
+                                <div class="leaderboard-role">CEO</div>
+                            </div>
+                            <div class="leaderboard-points">47,890</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-position">2</div>
+                            <div class="leaderboard-avatar">AL</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">André Luiz</div>
+                                <div class="leaderboard-role">Dev Sênior</div>
+                            </div>
+                            <div class="leaderboard-points">42,350</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-position">3</div>
+                            <div class="leaderboard-avatar">CM</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Camila Mantovani</div>
+                                <div class="leaderboard-role">Projetos</div>
+                            </div>
+                            <div class="leaderboard-points">39,720</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-position">4</div>
+                            <div class="leaderboard-avatar">RB</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Renata Bariani</div>
+                                <div class="leaderboard-role">Financeiro</div>
+                            </div>
+                            <div class="leaderboard-points">37,180</div>
+                        </div>
+
+                        <div class="leaderboard-item">
+                            <div class="rank-position">5</div>
+                            <div class="leaderboard-avatar">CL</div>
+                            <div class="leaderboard-info">
+                                <div class="leaderboard-name">Caroline Lanzilotti</div>
+                                <div class="leaderboard-role">Marketing</div>
+                            </div>
+                            <div class="leaderboard-points">34,650</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHALLENGES SECTION -->
+            <div class="challenges-section">
+                <div class="challenge-card daily">
+                    <div class="challenge-header">
+                        <div class="challenge-type">Diário</div>
+                        <div class="challenge-reward">
+                            <i class="fas fa-coins"></i>
+                            +250 XP
+                        </div>
+                    </div>
+                    
+                    <h3 class="challenge-title">Líder Presente</h3>
+                    <p class="challenge-description">
+                        Faça check-in no sistema e responda a pelo menos 5 mensagens importantes hoje.
+                    </p>
+                    
+                    <div class="challenge-progress">
+                        <div class="progress-header">
+                            <span class="progress-text">Progresso</span>
+                            <span class="progress-percentage">80%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 80%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge-actions">
+                        <div class="challenge-deadline">Expira em: 3h 45min</div>
+                        <button class="challenge-btn complete" onclick="completeChallenge('daily')">
+                            Concluir
+                        </button>
+                    </div>
+                </div>
+
+                <div class="challenge-card weekly">
+                    <div class="challenge-header">
+                        <div class="challenge-type">Semanal</div>
+                        <div class="challenge-reward">
+                            <i class="fas fa-coins"></i>
+                            +750 XP
+                        </div>
+                    </div>
+                    
+                    <h3 class="challenge-title">Visionário Estratégico</h3>
+                    <p class="challenge-description">
+                        Revise e aprove 10 projetos, participe de 3 reuniões estratégicas e defina 2 metas semanais.
+                    </p>
+                    
+                    <div class="challenge-progress">
+                        <div class="progress-header">
+                            <span class="progress-text">Projetos: 7/10 • Reuniões: 2/3 • Metas: 2/2</span>
+                            <span class="progress-percentage">67%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 67%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge-actions">
+                        <div class="challenge-deadline">Expira em: 2 dias</div>
+                        <button class="challenge-btn complete" onclick="completeChallenge('weekly')">
+                            Continuar
+                        </button>
+                    </div>
+                </div>
+
+                <div class="challenge-card monthly">
+                    <div class="challenge-header">
+                        <div class="challenge-type">Mensal</div>
+                        <div class="challenge-reward">
+                            <i class="fas fa-coins"></i>
+                            +2000 XP
+                        </div>
+                    </div>
+                    
+                    <h3 class="challenge-title">Revolução Completa</h3>
+                    <p class="challenge-description">
+                        Implemente 1 novo módulo do Journey 100k, aumente o faturamento em 15% e contrate 2 talentos.
+                    </p>
+                    
+                    <div class="challenge-progress">
+                        <div class="progress-header">
+                            <span class="progress-text">Módulos: 1/1 • Faturamento: +18% • Talentos: 3/2</span>
+                            <span class="progress-percentage">100%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="challenge-actions">
+                        <div class="challenge-deadline">Completo!</div>
+                        <button class="challenge-btn completed">
+                            <i class="fas fa-check"></i>
+                            Concluído
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITIES -->
+            <div class="activity-feed">
+                <div class="section-header">
+                    <h3 class="section-title">
+                        <div class="section-icon" style="background: linear-gradient(135deg, #10b981, #059669);">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        Atividades Recentes
+                    </h3>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon achievement">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Nova conquista desbloqueada!</div>
+                        <div class="activity-description">"Mestre do Crescimento" - Por atingir R$ 2,8M mensais</div>
+                    </div>
+                    <div class="activity-time">2h atrás</div>
+                    <div class="activity-points">+1,500 XP</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon level">
+                        <i class="fas fa-arrow-up"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Subiu de nível!</div>
+                        <div class="activity-description">Parabéns! Você alcançou o Nível 15</div>
+                    </div>
+                    <div class="activity-time">1 dia atrás</div>
+                    <div class="activity-points">+2,000 XP</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon challenge">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Desafio mensal completado</div>
+                        <div class="activity-description">"Revolução Completa" - Todos os objetivos atingidos</div>
+                    </div>
+                    <div class="activity-time">2 dias atrás</div>
+                    <div class="activity-points">+2,000 XP</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon project">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Módulo de Gamificação lançado</div>
+                        <div class="activity-description">9º módulo do Journey 100k implementado com sucesso</div>
+                    </div>
+                    <div class="activity-time">Hoje</div>
+                    <div class="activity-points">+3,000 XP</div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon achievement">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">Conquista desbloqueada!</div>
+                        <div class="activity-description">"Construtor de Equipes" - 29 funcionários contratados</div>
+                    </div>
+                    <div class="activity-time">3 dias atrás</div>
+                    <div class="activity-points">+800 XP</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PARTICLES CONTAINER -->
+    <div class="particles" id="particles"></div>
+
+    <script>
+        // =================================================================
+        // SISTEMA DE GAMIFICAÇÃO
+        // =================================================================
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // =================================================================
+        // FUNCIONALIDADES DE GAMIFICAÇÃO
+        // =================================================================
+
+        let playerData = {
+            level: 15,
+            xp: 7350,
+            maxXp: 10000,
+            totalPoints: 47890,
+            achievements: 23,
+            rank: 1
+        };
+
+        // Complete challenge
+        function completeChallenge(type) {
+            const challengeRewards = {
+                'daily': 250,
+                'weekly': 750,
+                'monthly': 2000
+            };
+            
+            const reward = challengeRewards[type];
+            const challengeNames = {
+                'daily': 'Líder Presente',
+                'weekly': 'Visionário Estratégico', 
+                'monthly': 'Revolução Completa'
+            };
+            
+            // Add XP
+            playerData.xp += reward;
+            playerData.totalPoints += reward;
+            
+            // Check for level up
+            if (playerData.xp >= playerData.maxXp) {
+                levelUp();
+            }
+            
+            // Show completion effect
+            createParticleExplosion();
+            showNotification(`Desafio "${challengeNames[type]}" concluído! +${reward} XP`, 'success');
+            
+            // Update button
+            const button = event.target;
+            button.textContent = 'Concluído';
+            button.className = 'challenge-btn completed';
+            button.disabled = true;
+            
+            // Update UI
+            updatePlayerUI();
+            
+            // Add to activity feed
+            addActivity('challenge', `Desafio ${type} completado`, `"${challengeNames[type]}" - Parabéns pela dedicação!`, 'Agora', `+${reward} XP`);
+        }
+
+        function levelUp() {
+            playerData.level++;
+            playerData.xp = playerData.xp - playerData.maxXp;
+            playerData.maxXp = Math.floor(playerData.maxXp * 1.2);
+            
+            // Level up effects
+            createParticleExplosion(true);
+            showNotification(`Parabéns! Você subiu para o Nível ${playerData.level}!`, 'success');
+            
+            // Check for new achievements
+            checkAchievements();
+        }
+
+        function checkAchievements() {
+            // Simulate achievement unlock based on level
+            if (playerData.level === 16) {
+                unlockAchievement('Líder Experiente', 'Alcance o nível 16', 'fas fa-star');
+            }
+        }
+
+        function unlockAchievement(title, description, icon) {
+            // Find locked achievement and unlock it
+            const achievementCards = document.querySelectorAll('.achievement-card.locked');
+            if (achievementCards.length > 0) {
+                const card = achievementCards[0];
+                card.classList.remove('locked');
+                card.classList.add('unlocked');
+                
+                // Add unlock effect
+                const effect = document.createElement('div');
+                effect.className = 'unlock-effect';
+                card.appendChild(effect);
+                
+                setTimeout(() => {
+                    card.removeChild(effect);
+                }, 600);
+                
+                playerData.achievements++;
+                showNotification(`Nova conquista desbloqueada: "${title}"!`, 'success');
+                addActivity('achievement', 'Nova conquista desbloqueada!', `"${title}" - ${description}`, 'Agora', '+1,500 XP');
+            }
+        }
+
+        function updatePlayerUI() {
+            // Update XP bar
+            const xpPercentage = (playerData.xp / playerData.maxXp) * 100;
+            document.querySelector('.xp-fill').style.width = `${xpPercentage}%`;
+            document.querySelector('.xp-text').textContent = `${playerData.xp.toLocaleString()} / ${playerData.maxXp.toLocaleString()} XP`;
+            
+            // Update level
+            document.querySelector('.level-badge').textContent = `Nível ${playerData.level}`;
+            
+            // Update stats
+            document.querySelectorAll('.stat-value')[0].textContent = playerData.totalPoints.toLocaleString();
+            document.querySelectorAll('.stat-value')[1].textContent = playerData.achievements;
+            document.querySelectorAll('.stat-value')[2].textContent = `${playerData.rank}°`;
+        }
+
+        function addActivity(type, title, description, time, points) {
+            const activityFeed = document.querySelector('.activity-feed');
+            const iconTypes = {
+                'achievement': 'fas fa-trophy',
+                'level': 'fas fa-arrow-up',
+                'challenge': 'fas fa-check-circle',
+                'project': 'fas fa-project-diagram'
+            };
+            
+            const activityHTML = `
+                <div class="activity-item">
+                    <div class="activity-icon ${type}">
+                        <i class="${iconTypes[type]}"></i>
+                    </div>
+                    <div class="activity-content">
+                        <div class="activity-title">${title}</div>
+                        <div class="activity-description">${description}</div>
+                    </div>
+                    <div class="activity-time">${time}</div>
+                    <div class="activity-points">${points}</div>
+                </div>
+            `;
+            
+            // Add to beginning of activity feed
+            const firstActivity = activityFeed.querySelector('.activity-item');
+            if (firstActivity) {
+                firstActivity.insertAdjacentHTML('beforebegin', activityHTML);
+            }
+        }
+
+        // =================================================================
+        // EFEITOS VISUAIS
+        // =================================================================
+
+        function createParticleExplosion(isLevelUp = false) {
+            const particles = document.getElementById('particles');
+            const colors = isLevelUp ? ['#8b5cf6', '#3b82f6', '#10b981'] : ['#f59e0b', '#fbbf24', '#f97316'];
+            
+            for (let i = 0; i < (isLevelUp ? 50 : 20); i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}vw;
+                    top: ${Math.random() * 100}vh;
+                    width: ${Math.random() * 8 + 4}px;
+                    height: ${Math.random() * 8 + 4}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                `;
+                
+                particles.appendChild(particle);
+                
+                setTimeout(() => {
+                    particles.removeChild(particle);
+                }, 3000);
+            }
+        }
+
+        // =================================================================
+        // NOTIFICAÇÕES
+        // =================================================================
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 600;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                max-width: 350px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'trophy' : type === 'warning' ? 'exclamation' : type === 'error' ? 'times' : 'info'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 5000);
+        }
+
+        // =================================================================
+        // SIMULAÇÕES DINÂMICAS
+        // =================================================================
+
+        function simulateProgress() {
+            setInterval(() => {
+                // Random small XP gains
+                if (Math.random() > 0.98) {
+                    const xpGain = Math.floor(Math.random() * 50) + 10;
+                    playerData.xp += xpGain;
+                    playerData.totalPoints += xpGain;
+                    
+                    updatePlayerUI();
+                    
+                    const activities = [
+                        'Tarefa concluída',
+                        'Documento revisado',
+                        'Reunião produtiva',
+                        'Meta atingida',
+                        'Feedback positivo'
+                    ];
+                    
+                    const randomActivity = activities[Math.floor(Math.random() * activities.length)];
+                    showNotification(`${randomActivity} - +${xpGain} XP`, 'info');
+                }
+                
+                // Check for level up
+                if (playerData.xp >= playerData.maxXp) {
+                    levelUp();
+                }
+            }, 5000);
+        }
+
+        // Update challenge progress
+        function updateChallengeProgress() {
+            setInterval(() => {
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const currentWidth = parseInt(bar.style.width) || 0;
+                    if (currentWidth < 100 && Math.random() > 0.95) {
+                        const newWidth = Math.min(currentWidth + Math.floor(Math.random() * 5) + 1, 100);
+                        bar.style.width = `${newWidth}%`;
+                        bar.parentElement.parentElement.querySelector('.progress-percentage').textContent = `${newWidth}%`;
+                    }
+                });
+            }, 3000);
+        }
+
+        // =================================================================
+        // INICIALIZAÇÃO
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Start simulations
+            simulateProgress();
+            updateChallengeProgress();
+            
+            // Menu mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+            }
+            
+            // Achievement hover effects
+            document.querySelectorAll('.achievement-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.achievement-title').textContent;
+                    const description = this.querySelector('.achievement-description').textContent;
+                    const isUnlocked = this.classList.contains('unlocked');
+                    
+                    if (isUnlocked) {
+                        showNotification(`Conquista: ${title} - ${description}`, 'success');
+                    } else {
+                        showNotification(`Bloqueado: ${title} - ${description}`, 'info');
+                    }
+                });
+            });
+            
+            // Welcome notification
+            setTimeout(() => {
+                showNotification('Sistema de Gamificação carregado! 🏆', 'success');
+            }, 1000);
+            
+            setTimeout(() => {
+                showNotification('Você está no 1° lugar do ranking! Continue assim!', 'info');
+            }, 3000);
+            
+            console.log('🏆 Sistema de Gamificação Journey 100k iniciado!');
+            console.log('⚡ Conquistas e desafios carregados');
+            console.log('📊 Sistema de pontuação ativo');
+            console.log('🎮 Efeitos visuais configurados');
+        });
+
+        // =================================================================
+        // NAVEGAÇÃO
+        // =================================================================
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active from all
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active to clicked
+                this.classList.add('active');
+                
+                // Navigate
+                const module = this.querySelector('span').textContent;
+                showNotification(`Navegando para: ${module}`, 'info');
+            });
+        });
+
+        // =================================================================
+        // ATALHOS E INTERAÇÕES
+        // =================================================================
+
+        // Konami Code for bonus XP
+        let konamiCode = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+        let konamiIndex = 0;
+
+        document.addEventListener('keydown', function(e) {
+            if (e.keyCode === konamiCode[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konamiCode.length) {
+                    playerData.xp += 1000;
+                    playerData.totalPoints += 1000;
+                    updatePlayerUI();
+                    createParticleExplosion(true);
+                    showNotification('Código secreto ativado! +1000 XP bônus! 🎮', 'success');
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
+            }
+        });
+
+        // Double click for surprise rewards
+        document.addEventListener('dblclick', function(e) {
+            if (Math.random() > 0.9) {
+                const bonusXp = Math.floor(Math.random() * 100) + 50;
+                playerData.xp += bonusXp;
+                playerData.totalPoints += bonusXp;
+                updatePlayerUI();
+                createParticleExplosion();
+                showNotification(`Surpresa! +${bonusXp} XP por ser curioso!`, 'success');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ponto Digital - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* PONTO CONTENT */
+        .ponto-content {
+            padding: 40px;
+        }
+
+        /* CLOCK SECTION */
+        .clock-section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .clock-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #10b981);
+        }
+
+        .current-time {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .current-date {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: #f0f9ff;
+            border: 2px solid #0ea5e9;
+            border-radius: 12px;
+            color: #0ea5e9;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+
+        .status-indicator.worked {
+            background: #f0fdf4;
+            border-color: #10b981;
+            color: #10b981;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* PUNCH BUTTONS */
+        .punch-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .punch-btn {
+            padding: 20px 30px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .punch-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .punch-btn:hover::before {
+            left: 100%;
+        }
+
+        .punch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .punch-in {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .punch-break {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .punch-out {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .punch-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* TODAY'S RECORD */
+        .today-record {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .record-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+        }
+
+        .record-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .record-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .record-card.entries .record-icon {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .record-card.hours .record-icon {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .record-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .record-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .record-subtitle {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .entries-list {
+            margin-top: 20px;
+        }
+
+        .entry-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .entry-item:last-child {
+            border-bottom: none;
+        }
+
+        .entry-type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .entry-type.in { color: #10b981; }
+        .entry-type.break { color: #f59e0b; }
+        .entry-type.out { color: #ef4444; }
+
+        .entry-time {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        /* WEEKLY REPORT */
+        .weekly-report {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .report-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .report-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .report-period {
+            padding: 8px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* WEEKLY GRID */
+        .week-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .day-card {
+            text-align: center;
+            padding: 15px 8px;
+            border-radius: 12px;
+            border: 2px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .day-card:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+
+        .day-card.today {
+            border-color: #3b82f6;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+        }
+
+        .day-card.weekend {
+            background: #f8fafc;
+            opacity: 0.7;
+        }
+
+        .day-name {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .day-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .day-hours {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .day-card.absent .day-hours {
+            color: #ef4444;
+        }
+
+        /* SUMMARY STATS */
+        .summary-stats {
+            display: grid;
+            gap: 20px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .stat-value {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .stat-value.positive {
+            color: #10b981;
+        }
+
+        .stat-value.negative {
+            color: #ef4444;
+        }
+
+        /* NOTIFICATIONS */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 10000;
+            transform: translateX(400px);
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification.info {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .notification.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .weekly-report {
+                grid-template-columns: 1fr;
+            }
+            
+            .week-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .ponto-content {
+                padding: 20px;
+            }
+            
+            .current-time {
+                font-size: 2.5rem;
+            }
+            
+            .punch-buttons {
+                grid-template-columns: 1fr;
+                max-width: 300px;
+            }
+            
+            .today-record {
+                grid-template-columns: 1fr;
+            }
+            
+            .week-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .clock-section,
+        .record-card,
+        .report-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .clock-section { animation-delay: 0.1s; }
+        .record-card:nth-child(1) { animation-delay: 0.2s; }
+        .record-card:nth-child(2) { animation-delay: 0.3s; }
+
+        /* NOTIFICATION DOT */
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Ponto Digital</h2>
+                <p>Sistema de controle de ponto eletrônico - Journey 100k</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">PF</div>
+                    <div class="user-details">
+                        <h4>Pedro Fraquete</h4>
+                        <p>CEO • Online</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- PONTO CONTENT -->
+        <div class="ponto-content">
+            <!-- CLOCK SECTION -->
+            <div class="clock-section">
+                <div class="current-time" id="currentTime">14:32:45</div>
+                <div class="current-date" id="currentDate">Segunda-feira, 22 de Setembro de 2025</div>
+                
+                <div class="status-indicator" id="statusIndicator">
+                    <div class="status-dot"></div>
+                    <span>Trabalhando desde 08:00</span>
+                </div>
+
+                <div class="punch-buttons">
+                    <button class="punch-btn punch-in" onclick="punchIn()" id="btnPunchIn" disabled>
+                        <i class="fas fa-sign-in-alt"></i>
+                        Entrada
+                    </button>
+                    <button class="punch-btn punch-break" onclick="punchBreak()" id="btnPunchBreak">
+                        <i class="fas fa-coffee"></i>
+                        Pausar
+                    </button>
+                    <button class="punch-btn punch-out" onclick="punchOut()" id="btnPunchOut">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Saída
+                    </button>
+                </div>
+            </div>
+
+            <!-- TODAY'S RECORD -->
+            <div class="today-record">
+                <div class="record-card entries">
+                    <div class="record-header">
+                        <div class="record-icon">
+                            <i class="fas fa-list"></i>
+                        </div>
+                        <div>
+                            <div class="record-title">Registros de Hoje</div>
+                        </div>
+                    </div>
+                    
+                    <div class="entries-list" id="todayEntries">
+                        <div class="entry-item">
+                            <div class="entry-type in">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Entrada
+                            </div>
+                            <div class="entry-time">08:00:00</div>
+                        </div>
+                        <div class="entry-item">
+                            <div class="entry-type break">
+                                <i class="fas fa-coffee"></i>
+                                Pausa Almoço
+                            </div>
+                            <div class="entry-time">12:00:00</div>
+                        </div>
+                        <div class="entry-item">
+                            <div class="entry-type in">
+                                <i class="fas fa-sign-in-alt"></i>
+                                Retorno
+                            </div>
+                            <div class="entry-time">13:00:00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="record-card hours">
+                    <div class="record-header">
+                        <div class="record-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <div class="record-title">Horas Trabalhadas</div>
+                        </div>
+                    </div>
+                    
+                    <div class="record-value" id="hoursWorked">05:32</div>
+                    <div class="record-subtitle">de 8h00 previstas</div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                            <span style="color: #64748b; font-size: 0.9rem;">Progresso</span>
+                            <span style="color: #10b981; font-weight: 600; font-size: 0.9rem;">69%</span>
+                        </div>
+                        <div style="width: 100%; height: 8px; background: #f1f5f9; border-radius: 4px; overflow: hidden;">
+                            <div style="width: 69%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 4px; transition: width 0.3s ease;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WEEKLY REPORT -->
+            <div class="weekly-report">
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3 class="report-title">Relatório Semanal</h3>
+                        <select class="report-period">
+                            <option>Esta semana (16-22 Set)</option>
+                            <option>Semana anterior (09-15 Set)</option>
+                            <option>Há 2 semanas (02-08 Set)</option>
+                        </select>
+                    </div>
+
+                    <div class="week-grid">
+                        <div class="day-card">
+                            <div class="day-name">DOM</div>
+                            <div class="day-number">16</div>
+                            <div class="day-hours">Folga</div>
+                        </div>
+                        <div class="day-card">
+                            <div class="day-name">SEG</div>
+                            <div class="day-number">17</div>
+                            <div class="day-hours">8h15</div>
+                        </div>
+                        <div class="day-card">
+                            <div class="day-name">TER</div>
+                            <div class="day-number">18</div>
+                            <div class="day-hours">8h00</div>
+                        </div>
+                        <div class="day-card">
+                            <div class="day-name">QUA</div>
+                            <div class="day-number">19</div>
+                            <div class="day-hours">8h30</div>
+                        </div>
+                        <div class="day-card">
+                            <div class="day-name">QUI</div>
+                            <div class="day-number">20</div>
+                            <div class="day-hours">7h45</div>
+                        </div>
+                        <div class="day-card">
+                            <div class="day-name">SEX</div>
+                            <div class="day-number">21</div>
+                            <div class="day-hours">8h10</div>
+                        </div>
+                        <div class="day-card today">
+                            <div class="day-name">SÁB</div>
+                            <div class="day-number">22</div>
+                            <div class="day-hours">5h32</div>
+                        </div>
+                    </div>
+
+                    <canvas id="weeklyChart" style="margin-top: 30px;" height="100"></canvas>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3 class="report-title">Resumo</h3>
+                    </div>
+
+                    <div class="summary-stats">
+                        <div class="stat-item">
+                            <div class="stat-label">Horas Trabalhadas</div>
+                            <div class="stat-value">46h12</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Horas Esperadas</div>
+                            <div class="stat-value">44h00</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Banco de Horas</div>
+                            <div class="stat-value positive">+2h12</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Atrasos</div>
+                            <div class="stat-value">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Faltas</div>
+                            <div class="stat-value">0</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Média Diária</div>
+                            <div class="stat-value">8h13</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-label">Pontualidade</div>
+                            <div class="stat-value positive">100%</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 25px; padding: 20px; background: #f0fdf4; border-radius: 12px; border: 1px solid #bbf7d0;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <i class="fas fa-trophy" style="color: #10b981;"></i>
+                            <span style="font-weight: 600; color: #10b981;">Parabéns!</span>
+                        </div>
+                        <p style="color: #166534; font-size: 0.9rem; margin: 0;">
+                            Você está com 100% de pontualidade esta semana e tem +2h12 no banco de horas.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // =================================================================
+        // SISTEMA DE PONTO DIGITAL
+        // =================================================================
+
+        let currentStatus = 'working'; // working, break, out
+        let startTime = new Date();
+        startTime.setHours(8, 0, 0);
+        let totalWorked = 5.5 * 60 * 60 * 1000; // 5h30 em ms
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // =================================================================
+        // RELÓGIO EM TEMPO REAL
+        // =================================================================
+
+        function updateClock() {
+            const now = new Date();
+            
+            // Atualizar horário
+            const timeString = now.toLocaleTimeString('pt-BR', {
+                hour12: false,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+            document.getElementById('currentTime').textContent = timeString;
+            
+            // Atualizar data
+            const dateString = now.toLocaleDateString('pt-BR', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            document.getElementById('currentDate').textContent = dateString;
+            
+            // Atualizar horas trabalhadas
+            updateWorkedHours();
+        }
+
+        function updateWorkedHours() {
+            const now = new Date();
+            const worked = now.getTime() - startTime.getTime() + totalWorked;
+            const hours = Math.floor(worked / (1000 * 60 * 60));
+            const minutes = Math.floor((worked % (1000 * 60 * 60)) / (1000 * 60));
+            
+            const hoursString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+            document.getElementById('hoursWorked').textContent = hoursString;
+            
+            // Atualizar barra de progresso
+            const expectedMs = 8 * 60 * 60 * 1000; // 8 horas
+            const percentage = Math.min((worked / expectedMs) * 100, 100);
+            const progressBar = document.querySelector('.report-card.hours .progress-bar div');
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
+            }
+        }
+
+        // =================================================================
+        // FUNCIONALIDADES DE PONTO
+        // =================================================================
+
+        function punchIn() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour12: false });
+            
+            // Adicionar entrada à lista
+            addEntry('in', 'Entrada', timeString);
+            
+            // Atualizar status
+            currentStatus = 'working';
+            updateStatus();
+            updateButtons();
+            
+            showNotification('Entrada registrada com sucesso!', 'success');
+        }
+
+        function punchBreak() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour12: false });
+            
+            if (currentStatus === 'working') {
+                // Iniciando pausa
+                addEntry('break', 'Pausa', timeString);
+                currentStatus = 'break';
+                showNotification('Pausa iniciada', 'info');
+            } else if (currentStatus === 'break') {
+                // Retornando da pausa
+                addEntry('in', 'Retorno', timeString);
+                currentStatus = 'working';
+                showNotification('Retorno da pausa registrado', 'success');
+            }
+            
+            updateStatus();
+            updateButtons();
+        }
+
+        function punchOut() {
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour12: false });
+            
+            // Adicionar saída à lista
+            addEntry('out', 'Saída', timeString);
+            
+            // Atualizar status
+            currentStatus = 'out';
+            updateStatus();
+            updateButtons();
+            
+            showNotification('Saída registrada com sucesso!', 'success');
+        }
+
+        function addEntry(type, label, time) {
+            const entriesList = document.getElementById('todayEntries');
+            const entryHTML = `
+                <div class="entry-item">
+                    <div class="entry-type ${type}">
+                        <i class="fas fa-${type === 'in' ? 'sign-in-alt' : type === 'break' ? 'coffee' : 'sign-out-alt'}"></i>
+                        ${label}
+                    </div>
+                    <div class="entry-time">${time}</div>
+                </div>
+            `;
+            entriesList.insertAdjacentHTML('beforeend', entryHTML);
+        }
+
+        function updateStatus() {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusDot = statusIndicator.querySelector('.status-dot');
+            const statusText = statusIndicator.querySelector('span');
+            
+            switch(currentStatus) {
+                case 'working':
+                    statusIndicator.className = 'status-indicator worked';
+                    statusText.textContent = 'Trabalhando desde 08:00';
+                    break;
+                case 'break':
+                    statusIndicator.className = 'status-indicator';
+                    statusText.textContent = 'Em pausa';
+                    break;
+                case 'out':
+                    statusIndicator.className = 'status-indicator';
+                    statusText.textContent = 'Expediente finalizado';
+                    break;
+            }
+        }
+
+        function updateButtons() {
+            const btnIn = document.getElementById('btnPunchIn');
+            const btnBreak = document.getElementById('btnPunchBreak');
+            const btnOut = document.getElementById('btnPunchOut');
+            
+            // Reset all buttons
+            btnIn.disabled = false;
+            btnBreak.disabled = false;
+            btnOut.disabled = false;
+            
+            switch(currentStatus) {
+                case 'working':
+                    btnIn.disabled = true;
+                    btnBreak.innerHTML = '<i class="fas fa-coffee"></i> Pausar';
+                    break;
+                case 'break':
+                    btnIn.disabled = true;
+                    btnBreak.innerHTML = '<i class="fas fa-play"></i> Retornar';
+                    break;
+                case 'out':
+                    btnBreak.disabled = true;
+                    btnOut.disabled = true;
+                    break;
+            }
+        }
+
+        // =================================================================
+        // NOTIFICAÇÕES
+        // =================================================================
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation' : 'info'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+
+        // =================================================================
+        // GRÁFICO SEMANAL
+        // =================================================================
+
+        function createWeeklyChart() {
+            const ctx = document.getElementById('weeklyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'],
+                    datasets: [{
+                        label: 'Horas Trabalhadas',
+                        data: [8.25, 8.0, 8.5, 7.75, 8.17, 5.5],
+                        backgroundColor: [
+                            '#10b981',
+                            '#10b981', 
+                            '#10b981',
+                            '#f59e0b',
+                            '#10b981',
+                            '#3b82f6'
+                        ],
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }, {
+                        label: 'Meta (8h)',
+                        data: [8, 8, 8, 8, 8, 8],
+                        type: 'line',
+                        borderColor: '#64748b',
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0,
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 10,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + 'h';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // =================================================================
+        // INICIALIZAÇÃO
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar relógio
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Configurar botões iniciais
+            updateButtons();
+            
+            // Criar gráfico
+            createWeeklyChart();
+            
+            // Menu mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+            }
+            
+            // Notificações de boas-vindas
+            setTimeout(() => {
+                showNotification('Sistema de Ponto Digital carregado!', 'success');
+            }, 1000);
+            
+            console.log('🕒 Sistema de Ponto Digital Journey 100k iniciado!');
+            console.log('⏰ Relógio em tempo real ativo');
+            console.log('📊 Relatórios semanais carregados');
+            console.log('🔔 Sistema de notificações funcionando');
+        });
+
+        // =================================================================
+        // NAVEGAÇÃO
+        // =================================================================
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remover active de todos
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Adicionar active ao clicado  
+                this.classList.add('active');
+                
+                // Simular navegação
+                const module = this.querySelector('span').textContent;
+                showNotification(`Navegando para: ${module}`, 'info');
+            });
+        });
+
+        // =================================================================
+        // FUNCIONALIDADES EXTRAS
+        // =================================================================
+
+        // Atalhos de teclado
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case '1':
+                        e.preventDefault();
+                        if (!document.getElementById('btnPunchIn').disabled) punchIn();
+                        break;
+                    case '2':
+                        e.preventDefault();
+                        if (!document.getElementById('btnPunchBreak').disabled) punchBreak();
+                        break;
+                    case '3':
+                        e.preventDefault();
+                        if (!document.getElementById('btnPunchOut').disabled) punchOut();
+                        break;
+                }
+            }
+        });
+
+        // Confirmar antes de fechar página se estiver trabalhando
+        window.addEventListener('beforeunload', function(e) {
+            if (currentStatus === 'working') {
+                e.preventDefault();
+                e.returnValue = '';
+                return 'Você ainda está trabalhando. Tem certeza que deseja sair?';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* REPORTS CONTENT */
+        .reports-content {
+            padding: 40px;
+        }
+
+        /* REPORTS TOOLBAR */
+        .reports-toolbar {
+            background: white;
+            padding: 25px 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .period-selector {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 4px;
+        }
+
+        .period-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #64748b;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .period-btn.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .date-range {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .date-range input {
+            border: none;
+            outline: none;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .toolbar-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+        }
+
+        .refresh-btn {
+            padding: 12px;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* REPORT CATEGORIES */
+        .report-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+            border-color: #3b82f6;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .category-card.financial { --accent-color: linear-gradient(90deg, #10b981, #059669); }
+        .category-card.projects { --accent-color: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .category-card.hr { --accent-color: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        .category-card.performance { --accent-color: linear-gradient(90deg, #f59e0b, #d97706); }
+        .category-card.marketing { --accent-color: linear-gradient(90deg, #ef4444, #dc2626); }
+        .category-card.operational { --accent-color: linear-gradient(90deg, #06b6d4, #0891b2); }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .category-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+        }
+
+        .category-card.financial .category-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .category-card.projects .category-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .category-card.hr .category-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .category-card.performance .category-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+        .category-card.marketing .category-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .category-card.operational .category-icon { background: linear-gradient(135deg, #06b6d4, #0891b2); }
+
+        .category-info h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .category-info p {
+            color: #64748b;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .category-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* DASHBOARD SECTION */
+        .dashboard-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-container {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-control {
+            padding: 6px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chart-control.active {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        /* KPI CARDS */
+        .kpi-grid {
+            display: grid;
+            gap: 20px;
+        }
+
+        .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border-left: 4px solid;
+        }
+
+        .kpi-card.revenue { border-color: #10b981; }
+        .kpi-card.growth { border-color: #3b82f6; }
+        .kpi-card.efficiency { border-color: #f59e0b; }
+        .kpi-card.satisfaction { border-color: #8b5cf6; }
+
+        .kpi-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .kpi-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            color: white;
+        }
+
+        .kpi-card.revenue .kpi-icon { background: #10b981; }
+        .kpi-card.growth .kpi-icon { background: #3b82f6; }
+        .kpi-card.efficiency .kpi-icon { background: #f59e0b; }
+        .kpi-card.satisfaction .kpi-icon { background: #8b5cf6; }
+
+        .kpi-title {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 600;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .kpi-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .kpi-change.positive {
+            color: #10b981;
+        }
+
+        .kpi-change.negative {
+            color: #ef4444;
+        }
+
+        /* DETAILED REPORTS */
+        .detailed-reports {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .report-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .report-action {
+            padding: 8px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .report-action:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        /* TABLE */
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .report-table th {
+            text-align: left;
+            padding: 12px 0;
+            border-bottom: 2px solid #f1f5f9;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .report-table td {
+            padding: 15px 0;
+            border-bottom: 1px solid #f8fafc;
+            color: #1e293b;
+        }
+
+        .report-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .table-company {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .table-amount {
+            font-weight: 700;
+            color: #10b981;
+        }
+
+        .table-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-progress {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* INSIGHTS */
+        .insights-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .insights-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .insights-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .insights-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .insight-item {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid;
+        }
+
+        .insight-item.positive {
+            background: #f0fdf4;
+            border-color: #10b981;
+        }
+
+        .insight-item.warning {
+            background: #fffbeb;
+            border-color: #f59e0b;
+        }
+
+        .insight-item.info {
+            background: #f0f9ff;
+            border-color: #3b82f6;
+        }
+
+        .insight-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .insight-description {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .dashboard-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .detailed-reports {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .reports-content {
+                padding: 20px;
+            }
+            
+            .reports-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toolbar-left {
+                justify-content: space-between;
+                margin-bottom: 15px;
+            }
+            
+            .report-categories {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-card,
+        .chart-container,
+        .report-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .category-card:nth-child(1) { animation-delay: 0.1s; }
+        .category-card:nth-child(2) { animation-delay: 0.2s; }
+        .category-card:nth-child(3) { animation-delay: 0.3s; }
+        .category-card:nth-child(4) { animation-delay: 0.4s; }
+        .category-card:nth-child(5) { animation-delay: 0.5s; }
+        .category-card:nth-child(6) { animation-delay: 0.6s; }
+
+        /* NOTIFICATION DOT */
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* LOADING STATES */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Relatórios Avançados</h2>
+                <p>Análises inteligentes e dashboards personalizáveis - Journey 100k</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">PF</div>
+                    <div class="user-details">
+                        <h4>Pedro Fraquete</h4>
+                        <p>CEO • Online</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- REPORTS CONTENT -->
+        <div class="reports-content">
+            <!-- TOOLBAR -->
+            <div class="reports-toolbar">
+                <div class="toolbar-left">
+                    <div class="period-selector">
+                        <button class="period-btn active" data-period="7d">7 dias</button>
+                        <button class="period-btn" data-period="30d">30 dias</button>
+                        <button class="period-btn" data-period="3m">3 meses</button>
+                        <button class="period-btn" data-period="1y">1 ano</button>
+                    </div>
+                    <div class="date-range">
+                        <i class="fas fa-calendar" style="color: #64748b;"></i>
+                        <input type="date" value="2025-09-15">
+                        <span style="color: #64748b;">até</span>
+                        <input type="date" value="2025-09-22">
+                    </div>
+                </div>
+                <div class="toolbar-right">
+                    <button class="refresh-btn" onclick="refreshData()" title="Atualizar dados">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="export-btn" onclick="exportReport()">
+                        <i class="fas fa-download"></i>
+                        Exportar
+                    </button>
+                </div>
+            </div>
+
+            <!-- REPORT CATEGORIES -->
+            <div class="report-categories">
+                <div class="category-card financial" onclick="openCategory('financial')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Relatórios Financeiros</h3>
+                            <p>Receitas, despesas, fluxo de caixa e análises de rentabilidade</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">R$ 2.8M</div>
+                            <div class="stat-label">Faturamento</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">18.2%</div>
+                            <div class="stat-label">Crescimento</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card projects" onclick="openCategory('projects')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Análise de Projetos</h3>
+                            <p>Performance, prazos, recursos e produtividade por projeto</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">47</div>
+                            <div class="stat-label">Projetos</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">94%</div>
+                            <div class="stat-label">Taxa Sucesso</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card hr" onclick="openCategory('hr')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Recursos Humanos</h3>
+                            <p>Desempenho da equipe, presença e análise de produtividade</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">29</div>
+                            <div class="stat-label">Funcionários</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">97.5%</div>
+                            <div class="stat-label">Presença</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card performance" onclick="openCategory('performance')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-tachometer-alt"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Performance Geral</h3>
+                            <p>KPIs principais, metas alcançadas e eficiência operacional</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">89%</div>
+                            <div class="stat-label">Eficiência</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Metas Ativas</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card marketing" onclick="openCategory('marketing')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-bullhorn"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Marketing & Vendas</h3>
+                            <p>Conversões, leads, campanhas e análise de ROI</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">2,340</div>
+                            <div class="stat-label">Leads</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">24.8%</div>
+                            <div class="stat-label">Conversão</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="category-card operational" onclick="openCategory('operational')">
+                    <div class="category-header">
+                        <div class="category-icon">
+                            <i class="fas fa-cogs"></i>
+                        </div>
+                        <div class="category-info">
+                            <h3>Operacional</h3>
+                            <p>Processos, workflows, tempos de execução e gargalos</p>
+                        </div>
+                    </div>
+                    <div class="category-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">15.3h</div>
+                            <div class="stat-label">Tempo Médio</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">Gargalos</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD SECTION -->
+            <div class="dashboard-section">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Análise de Receitas por Empresa</h3>
+                        <div class="chart-controls">
+                            <button class="chart-control active">Mensal</button>
+                            <button class="chart-control">Trimestral</button>
+                            <button class="chart-control">Anual</button>
+                        </div>
+                    </div>
+                    <canvas id="revenueChart" height="100"></canvas>
+                </div>
+
+                <div class="kpi-grid">
+                    <div class="kpi-card revenue">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="kpi-title">Receita Total</div>
+                        </div>
+                        <div class="kpi-value">R$ 2.847M</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +18.2% vs mês anterior
+                        </div>
+                    </div>
+
+                    <div class="kpi-card growth">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-trending-up"></i>
+                            </div>
+                            <div class="kpi-title">Taxa de Crescimento</div>
+                        </div>
+                        <div class="kpi-value">24.7%</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +3.2% vs trimestre
+                        </div>
+                    </div>
+
+                    <div class="kpi-card efficiency">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-tachometer-alt"></i>
+                            </div>
+                            <div class="kpi-title">Eficiência Operacional</div>
+                        </div>
+                        <div class="kpi-value">89.4%</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +2.1% vs meta
+                        </div>
+                    </div>
+
+                    <div class="kpi-card satisfaction">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="kpi-title">Satisfação Clientes</div>
+                        </div>
+                        <div class="kpi-value">4.8/5</div>
+                        <div class="kpi-change positive">
+                            <i class="fas fa-arrow-up"></i>
+                            +0.3 vs mês anterior
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DETAILED REPORTS -->
+            <div class="detailed-reports">
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3 class="report-title">Performance por Empresa</h3>
+                        <a href="#" class="report-action">Ver detalhes</a>
+                    </div>
+                    
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>Empresa</th>
+                                <th>Receita</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="table-company">
+                                        <div class="company-avatar">SG</div>
+                                        <span>Soluzione Giusta</span>
+                                    </div>
+                                </td>
+                                <td class="table-amount">R$ 1.245M</td>
+                                <td><span class="table-status status-completed">Meta Atingida</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-company">
+                                        <div class="company-avatar">ST</div>
+                                        <span>SG Tech</span>
+                                    </div>
+                                </td>
+                                <td class="table-amount">R$ 892K</td>
+                                <td><span class="table-status status-progress">Em Progresso</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-company">
+                                        <div class="company-avatar">SM</div>
+                                        <span>SG Marketing</span>
+                                    </div>
+                                </td>
+                                <td class="table-amount">R$ 456K</td>
+                                <td><span class="table-status status-completed">Meta Atingida</span></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="table-company">
+                                        <div class="company-avatar">SC</div>
+                                        <span>SG Consultoria</span>
+                                    </div>
+                                </td>
+                                <td class="table-amount">R$ 254K</td>
+                                <td><span class="table-status status-pending">Atenção</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="report-card">
+                    <div class="report-header">
+                        <h3 class="report-title">Projetos por Status</h3>
+                        <a href="#" class="report-action">Gerenciar</a>
+                    </div>
+                    
+                    <canvas id="projectsChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- INSIGHTS SECTION -->
+            <div class="insights-section">
+                <div class="insights-header">
+                    <div class="insights-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="insights-title">Insights Inteligentes</h3>
+                </div>
+
+                <div class="insight-item positive">
+                    <div class="insight-title">Crescimento Excepcional</div>
+                    <div class="insight-description">
+                        O faturamento do SG Tech cresceu 32% no último mês, superando a meta trimestral. 
+                        O projeto "Sistema Journey 100k" foi o principal responsável por este resultado.
+                    </div>
+                </div>
+
+                <div class="insight-item warning">
+                    <div class="insight-title">Atenção: SG Consultoria</div>
+                    <div class="insight-description">
+                        A receita da SG Consultoria está 15% abaixo da meta mensal. 
+                        Recomenda-se revisar a estratégia comercial e pipeline de projetos.
+                    </div>
+                </div>
+
+                <div class="insight-item info">
+                    <div class="insight-title">Oportunidade Identificada</div>
+                    <div class="insight-description">
+                        94% dos projetos estão sendo entregues no prazo, indicando alta eficiência operacional. 
+                        Considere aumentar a capacidade para aproveitar a demanda crescente.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // =================================================================
+        // SISTEMA DE RELATÓRIOS AVANÇADOS
+        // =================================================================
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // =================================================================
+        // FUNCIONALIDADES DE RELATÓRIOS
+        // =================================================================
+
+        // Period selector
+        document.querySelectorAll('.period-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const period = this.dataset.period;
+                showNotification(`Período alterado para: ${this.textContent}`, 'info');
+                refreshCharts();
+            });
+        });
+
+        // Chart controls
+        document.querySelectorAll('.chart-control').forEach(control => {
+            control.addEventListener('click', function() {
+                const parent = this.closest('.chart-controls');
+                parent.querySelectorAll('.chart-control').forEach(c => c.classList.remove('active'));
+                this.classList.add('active');
+                
+                showNotification(`Visualização alterada: ${this.textContent}`, 'info');
+                refreshCharts();
+            });
+        });
+
+        // Category navigation
+        function openCategory(category) {
+            const categories = {
+                'financial': 'Relatórios Financeiros',
+                'projects': 'Análise de Projetos',
+                'hr': 'Recursos Humanos',
+                'performance': 'Performance Geral',
+                'marketing': 'Marketing & Vendas',
+                'operational': 'Operacional'
+            };
+            
+            showNotification(`Abrindo: ${categories[category]}`, 'info');
+        }
+
+        // Export functionality
+        function exportReport() {
+            showNotification('Preparando relatório para exportação...', 'info');
+            
+            setTimeout(() => {
+                const options = [
+                    '• PDF - Relatório completo',
+                    '• Excel - Dados tabulares',
+                    '• PowerPoint - Apresentação',
+                    '• PNG - Gráficos em imagem'
+                ].join('\n');
+                
+                alert(`Opções de Export:\n\n${options}\n\n(Em desenvolvimento)`);
+                showNotification('Relatório exportado com sucesso!', 'success');
+            }, 2000);
+        }
+
+        // Refresh data
+        function refreshData() {
+            const cards = document.querySelectorAll('.category-card, .chart-container, .report-card');
+            
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('loading');
+                    
+                    setTimeout(() => {
+                        card.classList.remove('loading');
+                    }, 1000 + (index * 200));
+                }, index * 100);
+            });
+            
+            showNotification('Atualizando dados...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Dados atualizados com sucesso!', 'success');
+                refreshCharts();
+            }, 3000);
+        }
+
+        // =================================================================
+        // GRÁFICOS COM CHART.JS
+        // =================================================================
+
+        let revenueChart, projectsChart;
+
+        function createCharts() {
+            // Revenue Chart
+            const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'],
+                    datasets: [
+                        {
+                            label: 'Soluzione Giusta',
+                            data: [120, 150, 130, 180, 200, 175, 220, 195, 245],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'SG Tech',
+                            data: [80, 95, 110, 125, 140, 135, 155, 145, 165],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'SG Marketing',
+                            data: [45, 55, 50, 65, 70, 68, 80, 75, 89],
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'SG Consultoria',
+                            data: [35, 40, 38, 45, 50, 48, 55, 52, 58],
+                            borderColor: '#f59e0b',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0,0,0,0.05)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return 'R$ ' + value + 'K';
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': R$ ' + context.parsed.y + 'K';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Projects Chart
+            const projectsCtx = document.getElementById('projectsChart').getContext('2d');
+            projectsChart = new Chart(projectsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Concluídos', 'Em Andamento', 'Pausados', 'Cancelados'],
+                    datasets: [{
+                        data: [28, 15, 3, 1],
+                        backgroundColor: [
+                            '#10b981',
+                            '#3b82f6',
+                            '#f59e0b',
+                            '#ef4444'
+                        ],
+                        borderWidth: 0,
+                        hoverBorderWidth: 3,
+                        hoverBorderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 15,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return context.label + ': ' + context.parsed + ' (' + percentage + '%)';
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        }
+
+        function refreshCharts() {
+            if (revenueChart && projectsChart) {
+                // Simulate data update
+                const newData = revenueChart.data.datasets.map(dataset => ({
+                    ...dataset,
+                    data: dataset.data.map(value => value + (Math.random() - 0.5) * 20)
+                }));
+                
+                revenueChart.data.datasets = newData;
+                revenueChart.update();
+                
+                // Update projects chart
+                const projectsData = [28, 15, 3, 1].map(value => value + Math.floor((Math.random() - 0.5) * 4));
+                projectsChart.data.datasets[0].data = projectsData;
+                projectsChart.update();
+            }
+        }
+
+        // =================================================================
+        // NOTIFICAÇÕES
+        // =================================================================
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 600;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation' : type === 'error' ? 'times' : 'info'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+
+        // =================================================================
+        // SIMULAÇÃO DE DADOS EM TEMPO REAL
+        // =================================================================
+
+        function updateRealTimeData() {
+            setInterval(() => {
+                // Update KPI values slightly
+                const kpiValues = document.querySelectorAll('.kpi-value');
+                kpiValues.forEach(value => {
+                    if (value.textContent.includes('R$')) {
+                        // Revenue
+                        const current = parseFloat(value.textContent.replace('R$ ', '').replace('M', ''));
+                        const variation = (Math.random() - 0.5) * 0.02; // ±1%
+                        const newValue = (current * (1 + variation)).toFixed(3);
+                        value.textContent = `R$ ${newValue}M`;
+                    } else if (value.textContent.includes('%')) {
+                        // Percentage
+                        const current = parseFloat(value.textContent.replace('%', ''));
+                        const variation = (Math.random() - 0.5) * 0.5; // ±0.25%
+                        const newValue = (current + variation).toFixed(1);
+                        value.textContent = `${newValue}%`;
+                    }
+                });
+                
+                // Occasionally show insights
+                if (Math.random() > 0.95) {
+                    const insights = [
+                        'Novo pico de vendas detectado no SG Tech',
+                        'Eficiência operacional subiu 2.3% na última hora',
+                        'Meta mensal pode ser atingida 5 dias antes do prazo',
+                        '3 novos leads qualificados identificados'
+                    ];
+                    
+                    const randomInsight = insights[Math.floor(Math.random() * insights.length)];
+                    showNotification(randomInsight, 'info');
+                }
+            }, 30000); // Every 30 seconds
+        }
+
+        // =================================================================
+        // INICIALIZAÇÃO
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create charts
+            createCharts();
+            
+            // Start real-time updates
+            updateRealTimeData();
+            
+            // Menu mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+            }
+            
+            // Welcome notification
+            setTimeout(() => {
+                showNotification('Sistema de Relatórios Avançados carregado!', 'success');
+            }, 1000);
+            
+            // Simulate periodic insights
+            setTimeout(() => {
+                showNotification('Insight: Crescimento de 24.7% identificado!', 'info');
+            }, 5000);
+            
+            console.log('📊 Sistema de Relatórios Journey 100k iniciado!');
+            console.log('📈 Dashboards avançados carregados');
+            console.log('🔍 Análises inteligentes ativas');
+            console.log('⚡ Dados em tempo real configurados');
+        });
+
+        // =================================================================
+        // NAVEGAÇÃO
+        // =================================================================
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active from all
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active to clicked
+                this.classList.add('active');
+                
+                // Navigate
+                const module = this.querySelector('span').textContent;
+                showNotification(`Navegando para: ${module}`, 'info');
+            });
+        });
+
+        // =================================================================
+        // ATALHOS DE TECLADO
+        // =================================================================
+
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + R para refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshData();
+            }
+            
+            // Ctrl/Cmd + E para export
+            if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                e.preventDefault();
+                exportReport();
+            }
+        });
+
+        // =================================================================
+        // RESPONSIVIDADE PARA GRÁFICOS
+        // =================================================================
+
+        window.addEventListener('resize', function() {
+            if (revenueChart && projectsChart) {
+                revenueChart.resize();
+                projectsChart.resize();
+            }
+        });
+    </script>
+</body>
+</html>

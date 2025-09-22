@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurações - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* SETTINGS CONTENT */
+        .settings-content {
+            padding: 40px;
+        }
+
+        /* SETTINGS NAVIGATION */
+        .settings-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .settings-nav {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            height: fit-content;
+        }
+
+        .settings-nav-item {
+            display: block;
+            padding: 15px 25px;
+            color: #64748b;
+            text-decoration: none;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .settings-nav-item:hover,
+        .settings-nav-item.active {
+            color: #3b82f6;
+            background: #f0f9ff;
+            border-left-color: #3b82f6;
+        }
+
+        .settings-nav-item i {
+            margin-right: 12px;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* SETTINGS PANELS */
+        .settings-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            display: none;
+        }
+
+        .settings-panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .panel-description {
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        /* SETTINGS GROUPS */
+        .settings-group {
+            margin-bottom: 40px;
+        }
+
+        .group-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        /* FORM ELEMENTS */
+        .form-row {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #f1f5f9;
+            transition: all 0.3s ease;
+        }
+
+        .form-row:hover {
+            border-color: #e2e8f0;
+            background: #fafbfc;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .form-description {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .form-control {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-input {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .form-select {
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* TOGGLE SWITCH */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: #cbd5e1;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #3b82f6;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(22px);
+        }
+
+        /* COLOR PICKER */
+        .color-picker {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .color-option.selected {
+            border-color: #1e293b;
+            transform: scale(1.1);
+        }
+
+        .color-option:hover {
+            transform: scale(1.05);
+        }
+
+        /* DANGER ZONE */
+        .danger-zone {
+            margin-top: 40px;
+            padding: 25px;
+            border: 2px solid #fecaca;
+            border-radius: 12px;
+            background: #fef2f2;
+        }
+
+        .danger-title {
+            color: #dc2626;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .danger-description {
+            color: #991b1b;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .danger-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* SYSTEM INFO */
+        .system-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .info-card {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            background: #f8fafc;
+        }
+
+        .info-label {
+            font-size: 0.85rem;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .info-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        /* MODULE STATUS */
+        .module-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .module-card {
+            padding: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .module-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1);
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .module-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .module-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .module-description {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .module-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .module-btn {
+            flex: 1;
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            background: white;
+            color: #64748b;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-btn:hover {
+            border-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .settings-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-nav {
+                order: -1;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .settings-content {
+                padding: 20px;
+            }
+            
+            .system-info {
+                grid-template-columns: 1fr;
+            }
+            
+            .module-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .settings-panel,
+        .module-card,
+        .info-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .module-card:nth-child(1) { animation-delay: 0.1s; }
+        .module-card:nth-child(2) { animation-delay: 0.2s; }
+        .module-card:nth-child(3) { animation-delay: 0.3s; }
+        .module-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* NOTIFICATION DOT */
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* SAVE INDICATOR */
+        .save-indicator {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            background: #10b981;
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .save-indicator.show {
+            transform: translateY(0);
+        }
+
+        /* LOADING STATE */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Configurações do Sistema</h2>
+                <p>Painel de controle e personalização - Journey 100k</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">PF</div>
+                    <div class="user-details">
+                        <h4>Pedro Fraquete</h4>
+                        <p>Super Admin • Online</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- SETTINGS CONTENT -->
+        <div class="settings-content">
+            <div class="settings-layout">
+                <!-- SETTINGS NAVIGATION -->
+                <div class="settings-nav">
+                    <a href="#" class="settings-nav-item active" data-panel="general">
+                        <i class="fas fa-cog"></i>
+                        Configurações Gerais
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="appearance">
+                        <i class="fas fa-palette"></i>
+                        Aparência
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="notifications">
+                        <i class="fas fa-bell"></i>
+                        Notificações
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="modules">
+                        <i class="fas fa-puzzle-piece"></i>
+                        Módulos do Sistema
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="users">
+                        <i class="fas fa-users-cog"></i>
+                        Usuários e Permissões
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="integrations">
+                        <i class="fas fa-plug"></i>
+                        Integrações
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="backup">
+                        <i class="fas fa-shield-alt"></i>
+                        Backup e Segurança
+                    </a>
+                    <a href="#" class="settings-nav-item" data-panel="advanced">
+                        <i class="fas fa-code"></i>
+                        Avançado
+                    </a>
+                </div>
+
+                <!-- SETTINGS PANELS -->
+                <div class="settings-panels">
+                    <!-- GENERAL SETTINGS -->
+                    <div class="settings-panel active" id="general">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Configurações Gerais</h2>
+                            <p class="panel-description">Configure as informações básicas do sistema e da empresa</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-building"></i></div>
+                                Informações da Empresa
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Nome da Empresa</div>
+                                    <div class="form-description">Nome principal exibido no sistema</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" value="Soluzione Giusta">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">CNPJ</div>
+                                    <div class="form-description">Cadastro Nacional da Pessoa Jurídica</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" value="12.345.678/0001-90">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Endereço</div>
+                                    <div class="form-description">Endereço principal da matriz</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" value="Av. Paulista, 1000 - São Paulo, SP">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Telefone</div>
+                                    <div class="form-description">Telefone principal para contato</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" value="(11) 99999-9999">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-globe"></i></div>
+                                Configurações Regionais
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Fuso Horário</div>
+                                    <div class="form-description">Fuso horário padrão do sistema</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select">
+                                        <option>America/Sao_Paulo (UTC-3)</option>
+                                        <option>America/New_York (UTC-5)</option>
+                                        <option>Europe/London (UTC+0)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Idioma</div>
+                                    <div class="form-description">Idioma padrão da interface</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select">
+                                        <option>Português (Brasil)</option>
+                                        <option>English (US)</option>
+                                        <option>Español</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Formato de Data</div>
+                                    <div class="form-description">Como as datas serão exibidas</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select">
+                                        <option>DD/MM/AAAA</option>
+                                        <option>MM/DD/AAAA</option>
+                                        <option>AAAA-MM-DD</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Moeda</div>
+                                    <div class="form-description">Moeda padrão para valores</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select">
+                                        <option>Real (R$)</option>
+                                        <option>Dólar ($)</option>
+                                        <option>Euro (€)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('general')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- APPEARANCE SETTINGS -->
+                    <div class="settings-panel" id="appearance">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Aparência</h2>
+                            <p class="panel-description">Personalize a aparência e tema do sistema</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-paint-brush"></i></div>
+                                Tema do Sistema
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Tema</div>
+                                    <div class="form-description">Escolha entre tema claro ou escuro</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select" onchange="changeTheme(this.value)">
+                                        <option value="light">Claro</option>
+                                        <option value="dark">Escuro</option>
+                                        <option value="auto">Automático</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Cor Principal</div>
+                                    <div class="form-description">Cor de destaque do sistema</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="color-picker">
+                                        <div class="color-option selected" style="background: #3b82f6;" data-color="#3b82f6"></div>
+                                        <div class="color-option" style="background: #10b981;" data-color="#10b981"></div>
+                                        <div class="color-option" style="background: #f59e0b;" data-color="#f59e0b"></div>
+                                        <div class="color-option" style="background: #ef4444;" data-color="#ef4444"></div>
+                                        <div class="color-option" style="background: #8b5cf6;" data-color="#8b5cf6"></div>
+                                        <div class="color-option" style="background: #06b6d4;" data-color="#06b6d4"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Sidebar Compacta</div>
+                                    <div class="form-description">Manter sidebar sempre compacta</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Animações</div>
+                                    <div class="form-description">Ativar animações da interface</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('appearance')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- NOTIFICATIONS SETTINGS -->
+                    <div class="settings-panel" id="notifications">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Notificações</h2>
+                            <p class="panel-description">Configure como e quando receber notificações</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-bell"></i></div>
+                                Notificações Push
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Novos Projetos</div>
+                                    <div class="form-description">Quando novos projetos forem criados</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Mensagens do Chat</div>
+                                    <div class="form-description">Para mensagens diretas e menções</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Relatórios Automáticos</div>
+                                    <div class="form-description">Quando relatórios forem gerados</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Conquistas</div>
+                                    <div class="form-description">Para novas conquistas desbloqueadas</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-envelope"></i></div>
+                                Notificações por Email
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Resumo Semanal</div>
+                                    <div class="form-description">Resumo das atividades da semana</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Alertas Financeiros</div>
+                                    <div class="form-description">Para questões financeiras importantes</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Horário das Notificações</div>
+                                    <div class="form-description">Apenas durante horário comercial</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('notifications')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- MODULES SETTINGS -->
+                    <div class="settings-panel" id="modules">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Módulos do Sistema</h2>
+                            <p class="panel-description">Gerencie os módulos ativos do Journey 100k</p>
+                        </div>
+
+                        <div class="system-info">
+                            <div class="info-card">
+                                <div class="info-label">Versão do Sistema</div>
+                                <div class="info-value">Journey 100k v2.0</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Módulos Ativos</div>
+                                <div class="info-value">10 de 10</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Última Atualização</div>
+                                <div class="info-value">22/09/2025</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Próxima Manutenção</div>
+                                <div class="info-value">01/10/2025</div>
+                            </div>
+                        </div>
+
+                        <div class="module-grid">
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Dashboard</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Visão geral e métricas principais do sistema. Gráficos de faturamento, projetos e funcionários.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('dashboard')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('dashboard')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Funcionários</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Gestão completa da equipe. Perfis, cargos, salários e informações de contato de todos os funcionários.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('employees')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('employees')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Projetos</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Sistema Kanban completo para gestão de projetos. Quadros, cards, prazos e responsáveis.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('projects')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('projects')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Financeiro</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Controle financeiro por empresa. Receitas, despesas, fluxo de caixa e relatórios contábeis.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('financial')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('financial')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Chat Interno</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Comunicação corporativa em tempo real. Conversas 1:1, canais por empresa e compartilhamento de arquivos.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('chat')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('chat')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Ponto Digital</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Controle de ponto eletrônico. Entrada, saída, pausas, banco de horas e relatórios de presença.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('timesheet')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('timesheet')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Documentos</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Gestão de arquivos corporativos. Upload, organização por pastas, busca e compartilhamento seguro.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('documents')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('documents')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Relatórios</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Dashboards avançados e análises inteligentes. Relatórios personalizáveis com insights automatizados.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('reports')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('reports')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Gamificação</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Sistema de motivação com pontos, conquistas, rankings e desafios para engajamento da equipe.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('gamification')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('gamification')">Atualizar</button>
+                                </div>
+                            </div>
+
+                            <div class="module-card">
+                                <div class="module-header">
+                                    <div class="module-name">Configurações</div>
+                                    <div class="module-status status-active">Ativo</div>
+                                </div>
+                                <div class="module-description">
+                                    Painel de controle completo do sistema. Configurações gerais, usuários, integrações e segurança.
+                                </div>
+                                <div class="module-actions">
+                                    <button class="module-btn" onclick="configureModule('settings')">Configurar</button>
+                                    <button class="module-btn" onclick="updateModule('settings')">Atualizar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- USERS SETTINGS -->
+                    <div class="settings-panel" id="users">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Usuários e Permissões</h2>
+                            <p class="panel-description">Gerencie usuários, funções e níveis de acesso</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-users"></i></div>
+                                Configurações de Usuários
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Auto-registro</div>
+                                    <div class="form-description">Permitir que novos usuários se registrem</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Verificação de Email</div>
+                                    <div class="form-description">Obrigar verificação de email para novos usuários</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Autenticação 2FA</div>
+                                    <div class="form-description">Exigir autenticação de dois fatores</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Sessão Única</div>
+                                    <div class="form-description">Permitir apenas uma sessão ativa por usuário</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('users')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- INTEGRATIONS SETTINGS -->
+                    <div class="settings-panel" id="integrations">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Integrações</h2>
+                            <p class="panel-description">Configure integrações com serviços externos</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-envelope"></i></div>
+                                Email e Comunicação
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Servidor SMTP</div>
+                                    <div class="form-description">Para envio de emails automáticos</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" placeholder="smtp.gmail.com">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Slack Webhook</div>
+                                    <div class="form-description">Para notificações no Slack</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" placeholder="https://hooks.slack.com/...">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-chart-line"></i></div>
+                                Analytics e Monitoramento
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Google Analytics</div>
+                                    <div class="form-description">ID de acompanhamento do Google Analytics</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" placeholder="GA-XXXXXXXXX-X">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">API de Monitoramento</div>
+                                    <div class="form-description">Para monitoramento de sistema</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('integrations')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- BACKUP SETTINGS -->
+                    <div class="settings-panel" id="backup">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Backup e Segurança</h2>
+                            <p class="panel-description">Configurações de backup automático e segurança</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-shield-alt"></i></div>
+                                Backup Automático
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Backup Diário</div>
+                                    <div class="form-description">Backup automático todos os dias às 2:00</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Retenção de Backups</div>
+                                    <div class="form-description">Por quantos dias manter os backups</div>
+                                </div>
+                                <div class="form-control">
+                                    <select class="form-select">
+                                        <option>7 dias</option>
+                                        <option>15 dias</option>
+                                        <option selected>30 dias</option>
+                                        <option>90 dias</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Último Backup</div>
+                                    <div class="form-description">Data do último backup realizado</div>
+                                </div>
+                                <div class="form-control">
+                                    <input type="text" class="form-input" value="22/09/2025 02:00" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right;">
+                            <button class="btn btn-secondary" onclick="createBackup()">Fazer Backup Agora</button>
+                            <button class="btn btn-primary" onclick="saveSettings('backup')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+
+                    <!-- ADVANCED SETTINGS -->
+                    <div class="settings-panel" id="advanced">
+                        <div class="panel-header">
+                            <h2 class="panel-title">Configurações Avançadas</h2>
+                            <p class="panel-description">Configurações técnicas e de desenvolvedor</p>
+                        </div>
+
+                        <div class="settings-group">
+                            <h3 class="group-title">
+                                <div class="group-icon"><i class="fas fa-database"></i></div>
+                                Banco de Dados
+                            </h3>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Modo Debug</div>
+                                    <div class="form-description">Ativar logs detalhados para desenvolvimento</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Cache do Sistema</div>
+                                    <div class="form-description">Cache para melhor performance</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div>
+                                    <div class="form-label">Compressão de Dados</div>
+                                    <div class="form-description">Comprimir dados para economizar espaço</div>
+                                </div>
+                                <div class="form-control">
+                                    <div class="toggle-switch active" onclick="toggleSwitch(this)">
+                                        <div class="toggle-slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="danger-zone">
+                            <h3 class="danger-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                Zona de Perigo
+                            </h3>
+                            <p class="danger-description">
+                                As ações abaixo são irreversíveis e podem causar perda de dados. 
+                                Use com extrema cautela e certifique-se de ter backups recentes.
+                            </p>
+                            <div class="danger-actions">
+                                <button class="btn btn-danger" onclick="clearCache()">Limpar Cache</button>
+                                <button class="btn btn-danger" onclick="resetSettings()">Resetar Configurações</button>
+                                <button class="btn btn-danger" onclick="factoryReset()">Reset Total</button>
+                            </div>
+                        </div>
+
+                        <div style="text-align: right; margin-top: 30px;">
+                            <button class="btn btn-secondary" onclick="cancelChanges()">Cancelar</button>
+                            <button class="btn btn-primary" onclick="saveSettings('advanced')" style="margin-left: 15px;">Salvar Alterações</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- SAVE INDICATOR -->
+    <div class="save-indicator" id="saveIndicator">
+        <i class="fas fa-check"></i>
+        Configurações salvas com sucesso!
+    </div>
+
+    <script>
+        // =================================================================
+        // SISTEMA DE CONFIGURAÇÕES
+        // =================================================================
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // =================================================================
+        // NAVEGAÇÃO ENTRE PAINÉIS
+        // =================================================================
+
+        document.querySelectorAll('.settings-nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Update navigation
+                document.querySelectorAll('.settings-nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update panels
+                const panelId = this.dataset.panel;
+                document.querySelectorAll('.settings-panel').forEach(panel => panel.classList.remove('active'));
+                document.getElementById(panelId).classList.add('active');
+                
+                showNotification(`Painel "${this.textContent.trim()}" ativado`, 'info');
+            });
+        });
+
+        // =================================================================
+        // FUNCIONALIDADES DE CONFIGURAÇÃO
+        // =================================================================
+
+        // Toggle switch
+        function toggleSwitch(element) {
+            element.classList.toggle('active');
+            const isActive = element.classList.contains('active');
+            showNotification(`Configuração ${isActive ? 'ativada' : 'desativada'}`, isActive ? 'success' : 'info');
+        }
+
+        // Color picker
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                
+                const color = this.dataset.color;
+                document.documentElement.style.setProperty('--primary-color', color);
+                showNotification('Cor principal alterada', 'success');
+            });
+        });
+
+        // Theme change
+        function changeTheme(theme) {
+            const themes = {
+                'light': 'Tema Claro',
+                'dark': 'Tema Escuro', 
+                'auto': 'Tema Automático'
+            };
+            
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+            
+            showNotification(`${themes[theme]} ativado`, 'success');
+        }
+
+        // Save settings
+        function saveSettings(panel) {
+            const panels = {
+                'general': 'Configurações Gerais',
+                'appearance': 'Aparência',
+                'notifications': 'Notificações',
+                'users': 'Usuários e Permissões',
+                'integrations': 'Integrações',
+                'backup': 'Backup e Segurança',
+                'advanced': 'Configurações Avançadas'
+            };
+            
+            // Show loading
+            const activePanel = document.querySelector('.settings-panel.active');
+            activePanel.classList.add('loading');
+            
+            setTimeout(() => {
+                activePanel.classList.remove('loading');
+                showSaveIndicator();
+                showNotification(`${panels[panel]} salvas com sucesso!`, 'success');
+            }, 1500);
+        }
+
+        function showSaveIndicator() {
+            const indicator = document.getElementById('saveIndicator');
+            indicator.classList.add('show');
+            
+            setTimeout(() => {
+                indicator.classList.remove('show');
+            }, 3000);
+        }
+
+        function cancelChanges() {
+            showNotification('Alterações canceladas', 'info');
+        }
+
+        // Module actions
+        function configureModule(module) {
+            const modules = {
+                'dashboard': 'Dashboard',
+                'employees': 'Funcionários',
+                'projects': 'Projetos',
+                'financial': 'Financeiro',
+                'chat': 'Chat Interno',
+                'timesheet': 'Ponto Digital',
+                'documents': 'Documentos',
+                'reports': 'Relatórios',
+                'gamification': 'Gamificação',
+                'settings': 'Configurações'
+            };
+            
+            showNotification(`Configurando módulo: ${modules[module]}`, 'info');
+        }
+
+        function updateModule(module) {
+            const modules = {
+                'dashboard': 'Dashboard',
+                'employees': 'Funcionários',
+                'projects': 'Projetos',
+                'financial': 'Financeiro',
+                'chat': 'Chat Interno',
+                'timesheet': 'Ponto Digital',
+                'documents': 'Documentos',
+                'reports': 'Relatórios',
+                'gamification': 'Gamificação',
+                'settings': 'Configurações'
+            };
+            
+            showNotification(`Atualizando módulo: ${modules[module]}...`, 'info');
+            
+            setTimeout(() => {
+                showNotification(`Módulo ${modules[module]} atualizado com sucesso!`, 'success');
+            }, 2000);
+        }
+
+        // Backup functions
+        function createBackup() {
+            showNotification('Iniciando backup manual...', 'info');
+            
+            setTimeout(() => {
+                showNotification('Backup criado com sucesso!', 'success');
+                document.querySelector('#backup input[readonly]').value = new Date().toLocaleString('pt-BR');
+            }, 3000);
+        }
+
+        // Dangerous operations
+        function clearCache() {
+            if (confirm('Tem certeza que deseja limpar todo o cache? Esta ação não pode ser desfeita.')) {
+                showNotification('Limpando cache do sistema...', 'info');
+                
+                setTimeout(() => {
+                    showNotification('Cache limpo com sucesso!', 'success');
+                }, 2000);
+            }
+        }
+
+        function resetSettings() {
+            if (confirm('Tem certeza que deseja resetar todas as configurações? Todas as personalizações serão perdidas.')) {
+                showNotification('Resetando configurações...', 'warning');
+                
+                setTimeout(() => {
+                    showNotification('Configurações resetadas para o padrão!', 'success');
+                }, 2500);
+            }
+        }
+
+        function factoryReset() {
+            const confirmation = prompt('Digite "CONFIRMAR RESET" para resetar todo o sistema:');
+            if (confirmation === 'CONFIRMAR RESET') {
+                showNotification('Iniciando reset completo do sistema...', 'warning');
+                
+                setTimeout(() => {
+                    alert('Reset completo realizado! O sistema será reiniciado.');
+                }, 3000);
+            } else if (confirmation !== null) {
+                showNotification('Reset cancelado - confirmação incorreta', 'info');
+            }
+        }
+
+        // =================================================================
+        // NOTIFICAÇÕES
+        // =================================================================
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'warning' ? '#f59e0b' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 25px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 600;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                max-width: 350px;
+            `;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation' : type === 'error' ? 'times' : 'info'}"></i>
+                ${message}
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => document.body.removeChild(notification), 300);
+            }, 4000);
+        }
+
+        // =================================================================
+        // INICIALIZAÇÃO
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Menu mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+            }
+            
+            // Auto-save detection
+            let settingsChanged = false;
+            document.querySelectorAll('.form-input, .form-select').forEach(input => {
+                input.addEventListener('change', () => {
+                    settingsChanged = true;
+                });
+            });
+            
+            // Warn before leaving with unsaved changes
+            window.addEventListener('beforeunload', function(e) {
+                if (settingsChanged) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                    return 'Você tem alterações não salvas. Deseja sair mesmo assim?';
+                }
+            });
+            
+            // Welcome notification
+            setTimeout(() => {
+                showNotification('Painel de Configurações carregado!', 'success');
+            }, 1000);
+            
+            // System status check
+            setTimeout(() => {
+                showNotification('Sistema Journey 100k v2.0 - Todos os módulos funcionando', 'info');
+            }, 3000);
+            
+            console.log('⚙️ Sistema de Configurações Journey 100k iniciado!');
+            console.log('🔧 Painel de controle completo ativo');
+            console.log('📊 10/10 módulos operacionais');
+            console.log('🛡️ Configurações de segurança carregadas');
+        });
+
+        // =================================================================
+        // NAVEGAÇÃO
+        // =================================================================
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Check for unsaved changes
+                if (settingsChanged) {
+                    const leave = confirm('Você tem alterações não salvas. Deseja sair mesmo assim?');
+                    if (!leave) return;
+                }
+                
+                // Remove active from all
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Add active to clicked
+                this.classList.add('active');
+                
+                // Navigate
+                const module = this.querySelector('span').textContent;
+                showNotification(`Navegando para: ${module}`, 'info');
+            });
+        });
+
+        // =================================================================
+        // ATALHOS DE TECLADO
+        // =================================================================
+
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + S para salvar
+            if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+                e.preventDefault();
+                const activePanel = document.querySelector('.settings-nav-item.active').dataset.panel;
+                saveSettings(activePanel);
+            }
+            
+            // Ctrl/Cmd + Z para cancelar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+                e.preventDefault();
+                cancelChanges();
+            }
+        });
+
+        // =================================================================
+        // MONITORAMENTO DO SISTEMA
+        // =================================================================
+
+        function systemHealthCheck() {
+            setInterval(() => {
+                // Simulate system monitoring
+                if (Math.random() > 0.98) {
+                    const alerts = [
+                        'Sistema funcionando normalmente',
+                        'Backup automático concluído',
+                        'Cache otimizado automaticamente',
+                        'Integrações sincronizadas'
+                    ];
+                    
+                    const randomAlert = alerts[Math.floor(Math.random() * alerts.length)];
+                    showNotification(randomAlert, 'success');
+                }
+            }, 30000);
+        }
+
+        // Start system monitoring
+        systemHealthCheck();
+
+        // Settings changed flag for forms
+        let settingsChanged = false;

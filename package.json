@@ -1,0 +1,64 @@
+{
+  "name": "sistema-journey-100k",
+  "version": "1.0.0",
+  "description": "Sistema completo de gestão empresarial - Journey 100k da Soluzione Giusta",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js",
+    "build": "npm run build:frontend",
+    "build:frontend": "echo 'Building frontend...'",
+    "db:migrate": "node database/migrate.js",
+    "db:seed": "node database/seed.js",
+    "test": "jest",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  },
+  "keywords": [
+    "gestao",
+    "empresarial",
+    "dashboard",
+    "crm",
+    "erp",
+    "soluzione-giusta",
+    "journey-100k"
+  ],
+  "author": {
+    "name": "Pedro Fraquete",
+    "email": "pedro@soluzionegiusta.com",
+    "url": "https://soluzionegiusta.com"
+  },
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "dotenv": "^16.3.1",
+    "@supabase/supabase-js": "^2.38.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.7",
+    "socket.io": "^4.7.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "jest": "^29.7.0",
+    "eslint": "^8.52.0",
+    "prettier": "^3.0.3",
+    "@types/node": "^20.8.7"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pedrofraquete/SISTEMA-PEDRO.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pedrofraquete/SISTEMA-PEDRO/issues"
+  },
+  "homepage": "https://github.com/pedrofraquete/SISTEMA-PEDRO#readme"
+}

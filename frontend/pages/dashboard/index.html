@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Journey 100k | Soluzione Giusta</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8fafc;
+            color: #334155;
+            overflow-x: hidden;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
+            padding: 20px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .logo {
+            padding: 0 25px 30px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar.collapsed .logo h1 {
+            opacity: 0;
+        }
+
+        .logo .rocket {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 15px;
+        }
+
+        .nav-item {
+            margin-bottom: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 15px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            transform: translateX(5px);
+        }
+
+        .nav-link i {
+            font-size: 1.2rem;
+            margin-right: 15px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .sidebar.collapsed .nav-link span {
+            opacity: 0;
+            width: 0;
+        }
+
+        .toggle-sidebar {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #3b82f6;
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 280px;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed + .main-content {
+            margin-left: 80px;
+        }
+
+        /* HEADER */
+        .header {
+            background: white;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .header-left h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 5px;
+        }
+
+        .header-left p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .user-details h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .user-details p {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        /* DASHBOARD CONTENT */
+        .dashboard-content {
+            padding: 40px;
+        }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.12);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--accent-color);
+        }
+
+        .stat-card.revenue { --accent-color: linear-gradient(90deg, #10b981, #059669); }
+        .stat-card.projects { --accent-color: linear-gradient(90deg, #3b82f6, #1d4ed8); }
+        .stat-card.employees { --accent-color: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        .stat-card.tasks { --accent-color: linear-gradient(90deg, #f59e0b, #d97706); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .stat-card.revenue .stat-icon { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-card.projects .stat-icon { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .stat-card.employees .stat-icon { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-card.tasks .stat-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+
+        .stat-change.positive {
+            color: #10b981;
+        }
+
+        .stat-change.negative {
+            color: #ef4444;
+        }
+
+        /* CHARTS SECTION */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .chart-period {
+            padding: 8px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        /* RECENT ACTIVITIES */
+        .activities-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .activity-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #f1f5f9;
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .activity-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-content h4 {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .activity-content p {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .activity-time {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+
+        /* URGENT ACCOUNTS */
+        .urgent-account {
+            background: linear-gradient(135deg, #fee2e2, #fecaca);
+            border-left: 4px solid #ef4444;
+        }
+
+        .urgent-account .activity-avatar {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        /* QUICK ACTIONS */
+        .quick-actions {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+        }
+
+        .fab {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .charts-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .activities-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 15px 20px;
+            }
+            
+            .dashboard-content {
+                padding: 20px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card,
+        .chart-card,
+        .activity-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        /* NOTIFICATION DOT */
+        .notification-dot {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 12px;
+            height: 12px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+
+        /* LOADING ANIMATION */
+        .loading-card {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <nav class="sidebar" id="sidebar">
+        <button class="toggle-sidebar" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <div class="logo">
+            <i class="fas fa-rocket rocket"></i>
+            <h1>Journey 100k</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link active">
+                    <i class="fas fa-chart-pie"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-users"></i>
+                    <span>Funcionários</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Projetos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-dollar-sign"></i>
+                    <span>Financeiro</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                    <div class="notification-dot"></div>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-clock"></i>
+                    <span>Ponto Digital</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Documentos</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Relatórios</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-trophy"></i>
+                    <span>Gamificação</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-cog"></i>
+                    <span>Configurações</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-left">
+                <h2>Dashboard Principal</h2>
+                <p>Bem-vindo ao sistema Journey 100k - Visão geral da Soluzione Giusta</p>
+            </div>
+            <div class="header-right">
+                <div class="user-info">
+                    <div class="user-avatar">PF</div>
+                    <div class="user-details">
+                        <h4>Pedro Fraquete</h4>
+                        <p>CEO • Super Admin</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <div class="dashboard-content">
+            <!-- STATS CARDS -->
+            <div class="stats-grid">
+                <div class="stat-card revenue">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">R$ 2,8M</div>
+                    <div class="stat-label">Faturamento Total</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +18.2% vs mês anterior
+                    </div>
+                </div>
+
+                <div class="stat-card projects">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">47</div>
+                    <div class="stat-label">Projetos Ativos</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +12 novos este mês
+                    </div>
+                </div>
+
+                <div class="stat-card employees">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">29</div>
+                    <div class="stat-label">Funcionários</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        +3 contratados
+                    </div>
+                </div>
+
+                <div class="stat-card tasks">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                    </div>
+                    <div class="stat-value">284</div>
+                    <div class="stat-label">Tarefas Concluídas</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i>
+                        94% taxa de conclusão
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Faturamento Mensal</h3>
+                        <select class="chart-period">
+                            <option>Últimos 12 meses</option>
+                            <option>Últimos 6 meses</option>
+                            <option>Últimos 3 meses</option>
+                        </select>
+                    </div>
+                    <canvas id="revenueChart" height="100"></canvas>
+                </div>
+
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3 class="chart-title">Distribuição por Empresa</h3>
+                    </div>
+                    <canvas id="companiesChart" height="200"></canvas>
+                </div>
+            </div>
+
+            <!-- ACTIVITIES SECTION -->
+            <div class="activities-section">
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Atividades Recentes</h3>
+                        <a href="#" style="color: #3b82f6; text-decoration: none; font-size: 0.9rem;">Ver todas</a>
+                    </div>
+                    
+                    <div class="activity-item">
+                        <div class="activity-avatar">JM</div>
+                        <div class="activity-content">
+                            <h4>Projeto Sistema ERP finalizado</h4>
+                            <p>João Marcos concluiu todas as tarefas do projeto</p>
+                        </div>
+                        <div class="activity-time">2h atrás</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar">MC</div>
+                        <div class="activity-content">
+                            <h4>Novo funcionário contratado</h4>
+                            <p>Mariana Costa foi adicionada ao setor de Marketing</p>
+                        </div>
+                        <div class="activity-time">4h atrás</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar">LS</div>
+                        <div class="activity-content">
+                            <h4>Meta de vendas atingida</h4>
+                            <p>Luciano Silva bateu a meta mensal de R$ 150k</p>
+                        </div>
+                        <div class="activity-time">6h atrás</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar">RF</div>
+                        <div class="activity-content">
+                            <h4>Relatório financeiro enviado</h4>
+                            <p>Roberto Ferreira enviou o relatório do Q3</p>
+                        </div>
+                        <div class="activity-time">8h atrás</div>
+                    </div>
+                </div>
+
+                <div class="activity-card">
+                    <div class="activity-header">
+                        <h3 class="activity-title">Contas Urgentes</h3>
+                        <span style="color: #ef4444; font-size: 0.9rem; font-weight: 600;">3 pendentes</span>
+                    </div>
+                    
+                    <div class="activity-item urgent-account">
+                        <div class="activity-avatar">!</div>
+                        <div class="activity-content">
+                            <h4>Pagamento Fornecedor ABC</h4>
+                            <p>Vencimento: Hoje • R$ 25.750,00</p>
+                        </div>
+                        <div class="activity-time">Urgente</div>
+                    </div>
+
+                    <div class="activity-item urgent-account">
+                        <div class="activity-avatar">!</div>
+                        <div class="activity-content">
+                            <h4>Salários do mês</h4>
+                            <p>Vencimento: Amanhã • R$ 187.320,00</p>
+                        </div>
+                        <div class="activity-time">1 dia</div>
+                    </div>
+
+                    <div class="activity-item urgent-account">
+                        <div class="activity-avatar">!</div>
+                        <div class="activity-content">
+                            <h4>Aluguel Escritório SP</h4>
+                            <p>Vencimento: 25/09 • R$ 12.500,00</p>
+                        </div>
+                        <div class="activity-time">3 dias</div>
+                    </div>
+
+                    <div class="activity-item">
+                        <div class="activity-avatar">$</div>
+                        <div class="activity-content">
+                            <h4>Recebimento Cliente XYZ</h4>
+                            <p>Previsão: 30/09 • R$ 45.000,00</p>
+                        </div>
+                        <div class="activity-time">8 dias</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+        <button class="fab" onclick="showQuickActions()" title="Ações rápidas">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <script>
+        // =================================================================
+        // FUNCIONALIDADES DA DASHBOARD
+        // =================================================================
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        }
+
+        // Quick actions
+        function showQuickActions() {
+            alert('Ações rápidas:\n\n• Novo Projeto\n• Novo Funcionário\n• Nova Transação\n• Novo Documento\n\n(Em desenvolvimento)');
+        }
+
+        // =================================================================
+        // GRÁFICOS COM CHART.JS
+        // =================================================================
+
+        // Gráfico de faturamento mensal
+        const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set'],
+                datasets: [{
+                    label: 'Faturamento (R$ mil)',
+                    data: [180, 220, 195, 280, 310, 265, 340, 295, 380],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: '#3b82f6',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.05)'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return 'R$ ' + value + 'k';
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                elements: {
+                    point: {
+                        hoverRadius: 8
+                    }
+                }
+            }
+        });
+
+        // Gráfico de distribuição por empresas
+        const companiesCtx = document.getElementById('companiesChart').getContext('2d');
+        new Chart(companiesCtx, {
+            type: 'doughnut',
+            data: {
+                labels: [
+                    'Soluzione Giusta',
+                    'SG Tech',
+                    'SG Marketing',
+                    'SG Consultoria',
+                    'SG Digital'
+                ],
+                datasets: [{
+                    data: [35, 25, 18, 12, 10],
+                    backgroundColor: [
+                        '#3b82f6',
+                        '#8b5cf6',
+                        '#10b981',
+                        '#f59e0b',
+                        '#ef4444'
+                    ],
+                    borderWidth: 0,
+                    hoverBorderWidth: 3,
+                    hoverBorderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true,
+                            font: {
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                cutout: '60%',
+                elements: {
+                    arc: {
+                        hoverBackgroundColor: function(context) {
+                            return context.parsed;
+                        }
+                    }
+                }
+            }
+        });
+
+        // =================================================================
+        // FUNCIONALIDADES DINÂMICAS
+        // =================================================================
+
+        // Atualizar dados em tempo real (simulação)
+        function updateRealTimeData() {
+            // Simular mudanças nos valores
+            const stats = document.querySelectorAll('.stat-value');
+            
+            // Pequenas variações aleatórias
+            setInterval(() => {
+                stats.forEach(stat => {
+                    if (stat.textContent.includes('R$')) {
+                        // Faturamento
+                        const current = parseFloat(stat.textContent.replace('R$ ', '').replace('M', ''));
+                        const variation = (Math.random() - 0.5) * 0.1; // ±5%
+                        const newValue = (current + variation).toFixed(1);
+                        stat.textContent = `R$ ${newValue}M`;
+                    }
+                });
+            }, 30000); // Atualizar a cada 30 segundos
+        }
+
+        // Notificações em tempo real
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                z-index: 10000;
+                font-weight: 500;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Menu mobile
+        function setupMobileMenu() {
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const toggleBtn = document.querySelector('.toggle-sidebar');
+                
+                toggleBtn.addEventListener('click', () => {
+                    sidebar.classList.toggle('open');
+                });
+                
+                // Fechar ao clicar fora
+                document.addEventListener('click', (e) => {
+                    if (!sidebar.contains(e.target) && !toggleBtn.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                    }
+                });
+            }
+        }
+
+        // =================================================================
+        // INICIALIZAÇÃO
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar funcionalidades
+            updateRealTimeData();
+            setupMobileMenu();
+            
+            // Simular notificações
+            setTimeout(() => {
+                showNotification('Sistema carregado com sucesso!', 'success');
+            }, 1000);
+            
+            setTimeout(() => {
+                showNotification('3 contas urgentes precisam de atenção', 'error');
+            }, 5000);
+            
+            setTimeout(() => {
+                showNotification('Novo projeto adicionado por João Marcos', 'info');
+            }, 10000);
+            
+            console.log('🚀 Dashboard Journey 100k carregado!');
+            console.log('📊 Dados simulados carregados');
+            console.log('🔔 Sistema de notificações ativo');
+            console.log('📱 Responsividade configurada');
+        });
+
+        // =================================================================
+        // NAVEGAÇÃO
+        // =================================================================
+
+        // Event listeners para links do menu
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remover active de todos
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                
+                // Adicionar active ao clicado
+                this.classList.add('active');
+                
+                // Simular navegação
+                const module = this.querySelector('span').textContent;
+                showNotification(`Navegando para: ${module}`, 'info');
+            });
+        });
+
+        // =================================================================
+        // SUPABASE INTEGRATION (PARA USAR COM DADOS REAIS)
+        // =================================================================
+
+        /*
+        // Exemplo de integração com Supabase
+        async function loadDashboardData() {
+            try {
+                // Buscar dados financeiros
+                const { data: financial } = await supabase
+                    .from('vw_dashboard_financeiro')
+                    .select('*');
+                
+                // Buscar projetos ativos
+                const { data: projects } = await supabase
+                    .from('projects')
+                    .select('*')
+                    .eq('status', 'ativo');
+                
+                // Buscar funcionários
+                const { data: employees } = await supabase
+                    .from('profiles')
+                    .select('*');
+                
+                // Atualizar dashboard com dados reais
+                updateDashboard(financial, projects, employees);
+                
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                showNotification('Erro ao carregar dados', 'error');
+            }
+        }
+        
+        // Chamar ao carregar a página
+        // loadDashboardData();
+        */
+    </script>
+</body>
+</html>
